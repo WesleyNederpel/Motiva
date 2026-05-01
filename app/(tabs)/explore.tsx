@@ -1,15 +1,51 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
-import { Collapsible } from '@/components/ui/collapsible';
 import { ExternalLink } from '@/components/external-link';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Collapsible } from '@/components/ui/collapsible';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Fonts } from '@/constants/theme';
+import { Image } from 'expo-image';
+import { useEffect, useState } from 'react';
+import { Platform, StyleSheet } from 'react-native';
+import { testSupabaseClient, testSupabaseConnection } from '../../lib/test-connection';
 
 export default function TabTwoScreen() {
+  const [connectionStatus, setConnectionStatus] = useState<string>('Not tested');
+  const [connectionDetails, setConnectionDetails] = useState<string>('');
+
+  useEffect(() => {
+    testConnection();
+  }, []);
+
+  const testConnection = async () => {
+    setConnectionStatus('Testing...');
+    setConnectionDetails('');
+
+    try {
+      // First test if client is initialized
+      const clientTest = testSupabaseClient();
+      if (!clientTest.success) {
+        setConnectionStatus('Client Error');
+        setConnectionDetails(clientTest.error || 'Unknown client error');
+        return;
+      }
+
+      // Then test actual connection
+      const result = await testSupabaseConnection();
+      if (result.success) {
+        setConnectionStatus('Connected');
+        setConnectionDetails('Supabase connection is working correctly!');
+      } else {
+        setConnectionStatus('Failed');
+        setConnectionDetails(result.error || 'Connection failed');
+      }
+    } catch (error) {
+      setConnectionStatus('Error');
+      setConnectionDetails(error instanceof Error ? error.message : 'Unknown error');
+    }
+  };
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#D0D0D0', dark: '#353636' }}
@@ -93,6 +129,23 @@ export default function TabTwoScreen() {
             </ThemedText>
           ),
         })}
+      </Collapsible>
+      <Collapsible title="Supabase Connection">
+        <ThemedText>
+          Test your Supabase database connection. The status will update automatically when you open this screen.
+        </ThemedText>
+        <ThemedView style={{ marginTop: 10, padding: 10, backgroundColor: connectionStatus === 'Connected' ? '#d4edda' : connectionStatus === 'Failed' || connectionStatus === 'Error' ? '#f8d7da' : '#d1ecf1', borderRadius: 5 }}>
+          <ThemedText type="defaultSemiBold">Status: {connectionStatus}</ThemedText>
+          {connectionDetails && (
+            <ThemedText style={{ marginTop: 5 }}>{connectionDetails}</ThemedText>
+          )}
+        </ThemedView>
+        <ThemedText style={{ marginTop: 10 }}>
+          <ThemedText type="link" onPress={testConnection}>Test Connection Again</ThemedText>
+        </ThemedText>
+        <ExternalLink href="https://supabase.com/docs/guides/getting-started">
+          <ThemedText type="link">Learn more about Supabase</ThemedText>
+        </ExternalLink>
       </Collapsible>
     </ParallaxScrollView>
   );
