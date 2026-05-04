@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { AuthStyles, BaseStyles } from '../../constants/styles';
 import { supabase } from '../../lib/supabase';
 
 export default function LoginScreen() {
@@ -29,105 +31,50 @@ export default function LoginScreen() {
   }
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-      <View style={styles.content}>
-        <Text style={styles.title}>Motiva</Text>
-        <Text style={styles.subtitle}>Log in om verder te gaan</Text>
+    <SafeAreaView style={BaseStyles.container}>
+      <KeyboardAvoidingView style={AuthStyles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={AuthStyles.content}>
+          <Text style={BaseStyles.title}>Motiva</Text>
+          <Text style={BaseStyles.subtitle}>Log in om verder te gaan</Text>
 
-        <View style={styles.form}>
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={email}
-            onChangeText={setEmail}
-            autoCapitalize="none"
-            keyboardType="email-address"
-          />
+          <View style={AuthStyles.form}>
+            <TextInput
+              style={BaseStyles.input}
+              placeholder="Email"
+              value={email}
+              onChangeText={setEmail}
+              autoCapitalize="none"
+              keyboardType="email-address"
+            />
 
-          <TextInput
-            style={styles.input}
-            placeholder="Wachtwoord"
-            value={password}
-            onChangeText={setPassword}
-            secureTextEntry
-          />
+            <TextInput
+              style={BaseStyles.input}
+              placeholder="Wachtwoord"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
 
-          <TouchableOpacity
-            style={[styles.button, loading && styles.buttonDisabled]}
-            onPress={signInWithEmail}
-            disabled={loading}
-          >
-            <Text style={styles.buttonText}>
-              {loading ? 'Bezig...' : 'Inloggen'}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[BaseStyles.button, loading && BaseStyles.buttonDisabled]}
+              onPress={signInWithEmail}
+              disabled={loading}
+            >
+              <Text style={BaseStyles.buttonText}>
+                {loading ? 'Bezig...' : 'Inloggen'}
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={styles.linkButton}
-            onPress={() => router.replace('/auth/register')}
-          >
-            <Text style={styles.linkText}>Nog geen account? Registreer hier</Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={BaseStyles.linkButton}
+              onPress={() => router.replace('/auth/register')}
+            >
+              <Text style={BaseStyles.linkText}>Nog geen account? Registreer hier</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  content: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 8,
-    color: '#007AFF',
-  },
-  subtitle: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginBottom: 32,
-    color: '#666',
-  },
-  form: {
-    width: '100%',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 16,
-    marginBottom: 16,
-    fontSize: 16,
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    borderRadius: 8,
-    padding: 16,
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  linkButton: {
-    alignItems: 'center',
-  },
-  linkText: {
-    color: '#007AFF',
-    fontSize: 14,
-  },
-});

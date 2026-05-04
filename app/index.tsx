@@ -1,6 +1,7 @@
-import { useEffect } from 'react';
-import { router } from 'expo-router';
 import { useAuth } from '@/hooks/useAuth';
+import { router } from 'expo-router';
+import { useEffect } from 'react';
+import LoadingScreen from './loading';
 
 export default function Index() {
   const { user, loading } = useAuth();
@@ -14,6 +15,11 @@ export default function Index() {
       }
     }
   }, [user, loading]);
+
+  // Show loading screen while checking authentication
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return null; // This component just handles redirection
 }

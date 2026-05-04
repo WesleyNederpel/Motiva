@@ -38,8 +38,8 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'Dashboard',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="list.bullet.clipboard.fill" color={color} />,
           headerRight: () => (
             <TouchableOpacity onPress={handleLogout} style={{ marginRight: 16 }}>
               <IconSymbol size={24} name="arrow.right.square" color="#007AFF" />

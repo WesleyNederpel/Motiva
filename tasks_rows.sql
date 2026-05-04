@@ -1,0 +1,1 @@
+INSERT INTO "public"."tasks" ("id", "user_id", "title", "completed", "created_at", "updated_at") VALUES ('59fda8eb-e817-4282-a979-9f2f0c6efc6d', '39c44287-92c1-4748-9c4d-12725b448863', 'PLE Motiva Testklaar maken', false, '2026-05-04 12:11:57.771619+00', '2026-05-04 12:11:59.525386+00');
