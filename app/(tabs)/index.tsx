@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { BaseStyles, DashboardStyles } from '@/constants/styles';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { supabase } from '@/lib/supabase';
 
 interface Task {
@@ -42,6 +42,10 @@ export default function DashboardScreen() {
   const [newSubtaskDeadlines, setNewSubtaskDeadlines] = useState<{ [key: string]: Date | null }>({});
   const [showTaskDatePicker, setShowTaskDatePicker] = useState(false);
   const [showSubtaskDatePicker, setShowSubtaskDatePicker] = useState<{ [key: string]: boolean }>({});
+
+  // Theme-aware styles
+  const styles = useThemedStyles();
+  const colors = useThemeColors();
 
   // Check user authentication
   const checkUser = async () => {
@@ -315,32 +319,33 @@ export default function DashboardScreen() {
   };
 
   return (
-    <SafeAreaView style={BaseStyles.container}>
-      <ThemedView style={BaseStyles.innerContainer}>
-        <ThemedView style={DashboardStyles.header}>
+    <SafeAreaView style={styles.container}>
+      <ThemedView style={styles.innerContainer}>
+        <ThemedView style={styles.header}>
           <ThemedText type="title">Dashboard</ThemedText>
           <TouchableOpacity
-            style={DashboardStyles.addButton}
+            style={styles.addButton}
             onPress={() => setShowAddTask(true)}
           >
-            <ThemedText style={DashboardStyles.addButtonText}>+ Add Task</ThemedText>
+            <ThemedText style={styles.addButtonText}>+ Add Task</ThemedText>
           </TouchableOpacity>
         </ThemedView>
 
         {showAddTask && (
-          <ThemedView style={DashboardStyles.addTaskContainer}>
+          <ThemedView style={styles.addTaskContainer}>
             <TextInput
-              style={BaseStyles.input}
+              style={styles.input}
               placeholder="Enter task title..."
               value={newTaskTitle}
               onChangeText={setNewTaskTitle}
+              placeholderTextColor={colors.placeholder}
               autoFocus
             />
             <TouchableOpacity
-              style={BaseStyles.input}
+              style={styles.input}
               onPress={() => setShowTaskDatePicker(true)}
             >
-              <ThemedText style={{ color: newTaskDeadline ? '#000' : '#999' }}>
+              <ThemedText style={{ color: newTaskDeadline ? colors.text : colors.placeholder }}>
                 {newTaskDeadline ? newTaskDeadline.toLocaleDateString() : 'Select deadline (optional)...'}
               </ThemedText>
             </TouchableOpacity>
@@ -357,108 +362,109 @@ export default function DashboardScreen() {
                 }}
               />
             )}
-            <ThemedView style={DashboardStyles.addTaskButtons}>
+            <ThemedView style={styles.addTaskButtons}>
               <TouchableOpacity
-                style={[BaseStyles.button, DashboardStyles.cancelButton]}
+                style={[styles.button, styles.cancelButton]}
                 onPress={() => {
                   setShowAddTask(false);
                   setNewTaskTitle('');
                   setNewTaskDeadline(null);
                 }}
               >
-                <ThemedText style={DashboardStyles.cancelButtonText}>Cancel</ThemedText>
+                <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[BaseStyles.button, DashboardStyles.saveButton]}
+                style={[styles.button, styles.saveButton]}
                 onPress={addTask}
               >
-                <ThemedText style={DashboardStyles.saveButtonText}>Save</ThemedText>
+                <ThemedText style={styles.saveButtonText}>Save</ThemedText>
               </TouchableOpacity>
             </ThemedView>
           </ThemedView>
         )}
 
-        <ScrollView style={DashboardStyles.taskList}>
+        <ScrollView style={styles.taskList}>
           {loading ? (
-            <ThemedView style={DashboardStyles.emptyState}>
-              <ThemedText style={DashboardStyles.emptyText}>Loading tasks...</ThemedText>
+            <ThemedView style={styles.emptyState}>
+              <ThemedText style={styles.emptyText}>Loading tasks...</ThemedText>
             </ThemedView>
           ) : tasks.length === 0 ? (
-            <ThemedView style={DashboardStyles.emptyState}>
-              <ThemedText style={DashboardStyles.emptyText}>No tasks yet. Add your first task!</ThemedText>
+            <ThemedView style={styles.emptyState}>
+              <ThemedText style={styles.emptyText}>No tasks yet. Add your first task!</ThemedText>
             </ThemedView>
           ) : (
             tasks.map(task => (
-              <ThemedView key={task.id} style={BaseStyles.taskItem}>
+              <ThemedView key={task.id} style={styles.taskItem}>
                 {/* Main Task Row */}
-                <ThemedView style={DashboardStyles.taskRow}>
+                <ThemedView style={styles.taskRow}>
                   <TouchableOpacity
-                    style={DashboardStyles.taskContent}
+                    style={styles.taskContent}
                     onPress={() => toggleTask(task.id)}
                   >
                     <ThemedView style={[
-                      BaseStyles.checkbox,
-                      task.completed && BaseStyles.checkboxChecked
+                      styles.checkbox,
+                      task.completed && styles.checkboxChecked
                     ]}>
                       {task.completed && (
-                        <ThemedText style={BaseStyles.checkmark}>✓</ThemedText>
+                        <ThemedText style={styles.checkmark}>✓</ThemedText>
                       )}
                     </ThemedView>
-                    <ThemedView style={DashboardStyles.taskTitleContainer}>
+                    <ThemedView style={styles.taskTitleContainer}>
                       <ThemedText style={[
-                        DashboardStyles.taskTitle,
-                        task.completed && DashboardStyles.taskTitleCompleted
+                        styles.taskTitle,
+                        task.completed && styles.taskTitleCompleted
                       ]}>
                         {task.title}
                       </ThemedText>
                       {task.deadline && (
-                        <ThemedText style={DashboardStyles.deadlineText}>
+                        <ThemedText style={styles.deadlineText}>
                           📅 Due: {new Date(task.deadline).toLocaleDateString()}
                         </ThemedText>
                       )}
                       {task.subtasks && task.subtasks.length > 0 && (
-                        <ThemedText style={DashboardStyles.subtaskCount}>
+                        <ThemedText style={styles.subtaskCount}>
                           {task.subtasks.filter(st => st.completed).length}/{task.subtasks.length} completed
                         </ThemedText>
                       )}
                     </ThemedView>
                   </TouchableOpacity>
-                  <ThemedView style={DashboardStyles.taskActions}>
+                  <ThemedView style={styles.taskActions}>
                     <TouchableOpacity
-                      style={DashboardStyles.expandButton}
+                      style={styles.expandButton}
                       onPress={() => toggleTaskExpansion(task.id)}
                     >
-                      <ThemedText style={DashboardStyles.expandButtonText}>
+                      <ThemedText style={styles.expandButtonText}>
                         {expandedTasks.has(task.id) ? '▼' : '▶'}
                       </ThemedText>
                     </TouchableOpacity>
                     <TouchableOpacity
-                      style={BaseStyles.deleteButton}
+                      style={styles.deleteButton}
                       onPress={() => deleteTask(task.id)}
                     >
-                      <ThemedText style={BaseStyles.deleteButtonText}>×</ThemedText>
+                      <ThemedText style={styles.deleteButtonText}>×</ThemedText>
                     </TouchableOpacity>
                   </ThemedView>
                 </ThemedView>
 
                 {/* Subtasks Section */}
                 {expandedTasks.has(task.id) && (
-                  <ThemedView style={DashboardStyles.subtasksContainer}>
+                  <ThemedView style={styles.subtasksContainer}>
                     {/* Add Subtask Form */}
                     {showAddSubtask[task.id] && (
-                      <ThemedView style={DashboardStyles.addSubtaskContainer}>
+                      <ThemedView style={styles.addSubtaskContainer}>
                         <TextInput
-                          style={DashboardStyles.subtaskInput}
+                          style={styles.subtaskInput}
                           placeholder="Enter subtask title..."
                           value={newSubtaskTitles[task.id] || ''}
                           onChangeText={(text) => setNewSubtaskTitles(prev => ({ ...prev, [task.id]: text }))}
+                          placeholderTextColor={colors.placeholder}
                           autoFocus
                         />
                         <TouchableOpacity
-                          style={DashboardStyles.subtaskInput}
+                          style={styles.subtaskInput}
                           onPress={() => setShowSubtaskDatePicker(prev => ({ ...prev, [task.id]: true }))}
                         >
-                          <ThemedText style={{ color: newSubtaskDeadlines[task.id] ? '#000' : '#999' }}>
+                          <ThemedText style={{ color: newSubtaskDeadlines[task.id] ? colors.text : colors.placeholder }}>
                             {newSubtaskDeadlines[task.id] ? newSubtaskDeadlines[task.id]!.toLocaleDateString() : 'Select deadline (optional)...'}
                           </ThemedText>
                         </TouchableOpacity>
@@ -475,22 +481,22 @@ export default function DashboardScreen() {
                             }}
                           />
                         )}
-                        <ThemedView style={DashboardStyles.addSubtaskButtons}>
+                        <ThemedView style={styles.addSubtaskButtons}>
                           <TouchableOpacity
-                            style={[BaseStyles.button, DashboardStyles.cancelButton]}
+                            style={[styles.button, styles.cancelButton]}
                             onPress={() => {
                               setShowAddSubtask(prev => ({ ...prev, [task.id]: false }));
                               setNewSubtaskTitles(prev => ({ ...prev, [task.id]: '' }));
                               setNewSubtaskDeadlines(prev => ({ ...prev, [task.id]: null }));
                             }}
                           >
-                            <ThemedText style={DashboardStyles.cancelButtonText}>Cancel</ThemedText>
+                            <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
                           </TouchableOpacity>
                           <TouchableOpacity
-                            style={[BaseStyles.button, DashboardStyles.saveButton]}
+                            style={[styles.button, styles.saveButton]}
                             onPress={() => addSubtask(task.id)}
                           >
-                            <ThemedText style={DashboardStyles.saveButtonText}>Add</ThemedText>
+                            <ThemedText style={styles.saveButtonText}>Add</ThemedText>
                           </TouchableOpacity>
                         </ThemedView>
                       </ThemedView>
@@ -498,39 +504,39 @@ export default function DashboardScreen() {
 
                     {/* Subtask List */}
                     {task.subtasks?.map(subtask => (
-                      <ThemedView key={subtask.id} style={DashboardStyles.subtaskItem}>
+                      <ThemedView key={subtask.id} style={styles.subtaskItem}>
                         <TouchableOpacity
-                          style={DashboardStyles.subtaskContent}
+                          style={styles.subtaskContent}
                           onPress={() => toggleSubtask(subtask.id, task.id)}
                         >
                           <ThemedView style={[
-                            BaseStyles.checkbox,
-                            BaseStyles.subtaskCheckbox,
-                            subtask.completed && BaseStyles.checkboxChecked
+                            styles.checkbox,
+                            styles.subtaskCheckbox,
+                            subtask.completed && styles.checkboxChecked
                           ]}>
                             {subtask.completed && (
-                              <ThemedText style={BaseStyles.checkmark}>✓</ThemedText>
+                              <ThemedText style={styles.checkmark}>✓</ThemedText>
                             )}
                           </ThemedView>
-                          <ThemedView style={DashboardStyles.subtaskTitleContainer}>
+                          <ThemedView style={styles.subtaskTitleContainer}>
                             <ThemedText style={[
-                              DashboardStyles.subtaskTitle,
-                              subtask.completed && DashboardStyles.taskTitleCompleted
+                              styles.subtaskTitle,
+                              subtask.completed && styles.taskTitleCompleted
                             ]}>
                               {subtask.title}
                             </ThemedText>
                             {subtask.deadline && (
-                              <ThemedText style={DashboardStyles.subtaskDeadlineText}>
+                              <ThemedText style={styles.subtaskDeadlineText}>
                                 📅 Due: {new Date(subtask.deadline).toLocaleDateString()}
                               </ThemedText>
                             )}
                           </ThemedView>
                         </TouchableOpacity>
                         <TouchableOpacity
-                          style={BaseStyles.deleteButton}
+                          style={styles.deleteButton}
                           onPress={() => deleteSubtask(subtask.id, task.id)}
                         >
-                          <ThemedText style={BaseStyles.deleteButtonText}>×</ThemedText>
+                          <ThemedText style={styles.deleteButtonText}>×</ThemedText>
                         </TouchableOpacity>
                       </ThemedView>
                     ))}
@@ -538,10 +544,10 @@ export default function DashboardScreen() {
                     {/* Add Subtask Button */}
                     {!showAddSubtask[task.id] && (
                       <TouchableOpacity
-                        style={DashboardStyles.addSubtaskButton}
+                        style={styles.addSubtaskButton}
                         onPress={() => setShowAddSubtask(prev => ({ ...prev, [task.id]: true }))}
                       >
-                        <ThemedText style={DashboardStyles.addSubtaskButtonText}>+ Add Subtask</ThemedText>
+                        <ThemedText style={styles.addSubtaskButtonText}>+ Add Subtask</ThemedText>
                       </TouchableOpacity>
                     )}
                   </ThemedView>

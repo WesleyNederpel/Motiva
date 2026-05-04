@@ -1,0 +1,225 @@
+import { BaseStyles, DashboardStyles } from '@/constants/styles';
+import { Colors } from '@/constants/theme';
+import { useMemo } from 'react';
+import { useColorScheme } from './use-color-scheme';
+
+/**
+ * Hook that provides theme-aware styles by combining base styles with current theme colors
+ */
+export function useThemedStyles() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const theme = Colors[colorScheme];
+
+  const themedStyles = useMemo(() => {
+    return {
+      // Base styles with theme colors
+      container: [
+        BaseStyles.container,
+        { backgroundColor: theme.background }
+      ],
+      centeredContainer: [
+        BaseStyles.centeredContainer,
+        { backgroundColor: theme.background }
+      ],
+      innerContainer: [
+        BaseStyles.innerContainer,
+        { backgroundColor: theme.background }
+      ],
+      title: [
+        BaseStyles.title,
+        { color: theme.primary }
+      ],
+      subtitle: [
+        BaseStyles.subtitle,
+        { color: theme.secondary }
+      ],
+      input: [
+        BaseStyles.input,
+        {
+          backgroundColor: theme.inputBackground,
+          borderColor: theme.border,
+          color: theme.text,
+        }
+      ],
+      button: [
+        BaseStyles.button,
+        { backgroundColor: theme.primary }
+      ],
+      buttonDisabled: [
+        BaseStyles.buttonDisabled,
+        { backgroundColor: theme.disabled }
+      ],
+      buttonText: [
+        BaseStyles.buttonText,
+        { color: theme.background }
+      ],
+      linkButton: BaseStyles.linkButton,
+      linkText: [
+        BaseStyles.linkText,
+        { color: theme.primary }
+      ],
+      taskItem: [
+        BaseStyles.taskItem,
+        {
+          backgroundColor: theme.surface,
+          shadowColor: theme.shadow,
+        }
+      ],
+      checkbox: [
+        BaseStyles.checkbox,
+        {
+          borderColor: theme.border,
+          backgroundColor: 'transparent',
+        }
+      ],
+      checkboxChecked: [
+        BaseStyles.checkboxChecked,
+        {
+          backgroundColor: theme.primary,
+          borderColor: theme.primary,
+        }
+      ],
+      checkmark: [
+        BaseStyles.checkmark,
+        { color: theme.background }
+      ],
+      deleteButton: BaseStyles.deleteButton,
+      deleteButtonText: [
+        BaseStyles.deleteButtonText,
+        { color: theme.error }
+      ],
+      subtaskCheckbox: BaseStyles.subtaskCheckbox,
+
+      // Dashboard styles with theme colors
+      header: DashboardStyles.header,
+      addButton: [
+        DashboardStyles.addButton,
+        { backgroundColor: theme.primary }
+      ],
+      addButtonText: [
+        DashboardStyles.addButtonText,
+        { color: theme.background }
+      ],
+      addTaskContainer: [
+        DashboardStyles.addTaskContainer,
+        { backgroundColor: theme.surface }
+      ],
+      addTaskButtons: DashboardStyles.addTaskButtons,
+      cancelButton: [
+        DashboardStyles.cancelButton,
+        { backgroundColor: theme.disabled }
+      ],
+      cancelButtonText: [
+        DashboardStyles.cancelButtonText,
+        { color: theme.text }
+      ],
+      saveButton: [
+        DashboardStyles.saveButton,
+        { backgroundColor: theme.primary }
+      ],
+      saveButtonText: [
+        DashboardStyles.saveButtonText,
+        { color: theme.background }
+      ],
+      taskList: DashboardStyles.taskList,
+      emptyState: DashboardStyles.emptyState,
+      emptyText: [
+        DashboardStyles.emptyText,
+        { color: theme.muted }
+      ],
+      taskRow: DashboardStyles.taskRow,
+      taskActions: DashboardStyles.taskActions,
+      taskTitleContainer: DashboardStyles.taskTitleContainer,
+      subtasksContainer: [
+        DashboardStyles.subtasksContainer,
+        { borderTopColor: theme.border }
+      ],
+      addSubtaskButtons: DashboardStyles.addSubtaskButtons,
+      taskContent: DashboardStyles.taskContent,
+      taskTitle: [
+        DashboardStyles.taskTitle,
+        { color: theme.text }
+      ],
+      taskTitleCompleted: [
+        DashboardStyles.taskTitleCompleted,
+        { color: theme.muted }
+      ],
+      subtaskCount: [
+        DashboardStyles.subtaskCount,
+        { color: theme.secondary }
+      ],
+      deadlineText: [
+        DashboardStyles.deadlineText,
+        { color: theme.primary }
+      ],
+      subtaskTitleContainer: DashboardStyles.subtaskTitleContainer,
+      subtaskDeadlineText: [
+        DashboardStyles.subtaskDeadlineText,
+        { color: theme.primary }
+      ],
+      expandButton: DashboardStyles.expandButton,
+      expandButtonText: [
+        DashboardStyles.expandButtonText,
+        { color: theme.secondary }
+      ],
+      addSubtaskContainer: [
+        DashboardStyles.addSubtaskContainer,
+        { backgroundColor: theme.surface }
+      ],
+      subtaskInput: [
+        DashboardStyles.subtaskInput,
+        {
+          backgroundColor: theme.inputBackground,
+          borderColor: theme.border,
+          color: theme.text,
+        }
+      ],
+      subtaskItem: [
+        DashboardStyles.subtaskItem,
+        { backgroundColor: theme.surface }
+      ],
+      subtaskContent: DashboardStyles.subtaskContent,
+      subtaskTitle: [
+        DashboardStyles.subtaskTitle,
+        { color: theme.text }
+      ],
+      addSubtaskButton: [
+        DashboardStyles.addSubtaskButton,
+        { backgroundColor: theme.disabled }
+      ],
+      addSubtaskButtonText: [
+        DashboardStyles.addSubtaskButtonText,
+        { color: theme.secondary }
+      ],
+      // Settings-specific styles
+      section: {
+        backgroundColor: theme.surface,
+        borderRadius: 10,
+        marginBottom: 20,
+      } as const,
+      menuItem: {
+        flexDirection: 'row' as const,
+        alignItems: 'center' as const,
+        padding: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: theme.border,
+      } as const,
+      menuText: {
+        fontSize: 16,
+        marginLeft: 12,
+        flex: 1,
+        color: theme.text,
+      } as const,
+    };
+  }, [colorScheme, theme]);
+
+  return themedStyles;
+}
+
+/**
+ * Hook to get individual theme colors
+ */
+export function useThemeColors() {
+  const colorScheme = useColorScheme() ?? 'light';
+  return Colors[colorScheme];
+}

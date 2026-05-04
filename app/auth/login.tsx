@@ -2,13 +2,17 @@ import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { Alert, KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { AuthStyles, BaseStyles } from '../../constants/styles';
+import { useThemeColors, useThemedStyles } from '../../hooks/use-themed-styles';
 import { supabase } from '../../lib/supabase';
 
 export default function LoginScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Theme-aware styles
+  const styles = useThemedStyles();
+  const colors = useThemeColors();
 
   async function signInWithEmail() {
     setLoading(true);
@@ -31,45 +35,47 @@ export default function LoginScreen() {
   }
 
   return (
-    <SafeAreaView style={BaseStyles.container}>
-      <KeyboardAvoidingView style={AuthStyles.keyboardContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={AuthStyles.content}>
-          <Text style={BaseStyles.title}>Motiva</Text>
-          <Text style={BaseStyles.subtitle}>Log in om verder te gaan</Text>
+    <SafeAreaView style={styles.container}>
+      <KeyboardAvoidingView style={styles.centeredContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={styles.innerContainer}>
+          <Text style={styles.title}>Motiva</Text>
+          <Text style={styles.subtitle}>Log in om verder te gaan</Text>
 
-          <View style={AuthStyles.form}>
+          <View style={styles.innerContainer}>
             <TextInput
-              style={BaseStyles.input}
+              style={styles.input}
               placeholder="Email"
               value={email}
               onChangeText={setEmail}
+              placeholderTextColor={colors.placeholder}
               autoCapitalize="none"
               keyboardType="email-address"
             />
 
             <TextInput
-              style={BaseStyles.input}
+              style={styles.input}
               placeholder="Wachtwoord"
               value={password}
               onChangeText={setPassword}
+              placeholderTextColor={colors.placeholder}
               secureTextEntry
             />
 
             <TouchableOpacity
-              style={[BaseStyles.button, loading && BaseStyles.buttonDisabled]}
+              style={[styles.button, loading && styles.buttonDisabled]}
               onPress={signInWithEmail}
               disabled={loading}
             >
-              <Text style={BaseStyles.buttonText}>
+              <Text style={styles.buttonText}>
                 {loading ? 'Bezig...' : 'Inloggen'}
               </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={BaseStyles.linkButton}
+              style={styles.linkButton}
               onPress={() => router.replace('/auth/register')}
             >
-              <Text style={BaseStyles.linkText}>Nog geen account? Registreer hier</Text>
+              <Text style={styles.linkText}>Nog geen account? Registreer hier</Text>
             </TouchableOpacity>
           </View>
         </View>

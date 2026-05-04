@@ -1,14 +1,14 @@
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { useRouter } from 'expo-router';
 import { IconSymbol } from '@/components/ui/icon-symbol';
-import { Colors } from '@/constants/theme';
-import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { supabase } from '@/lib/supabase';
+import { useRouter } from 'expo-router';
+import { Alert, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const colorScheme = useColorScheme();
-  const colors = Colors[colorScheme ?? 'light'];
+  const styles = useThemedStyles();
+  const colors = useThemeColors();
 
   const handleLogout = () => {
     Alert.alert(
@@ -29,45 +29,19 @@ export default function SettingsScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Text style={[styles.title, { color: colors.text }]}>Instellingen</Text>
-      
-      <View style={styles.section}>
-        <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
-          <IconSymbol size={24} name="arrow.right.square" color="#FF3B30" />
-          <Text style={[styles.menuText, { color: '#FF3B30' }]}>Uitloggen</Text>
-          <IconSymbol size={20} name="chevron.right" color="#C7C7CC" />
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={{ padding: 20 }}>
+        <Text style={[styles.title, { marginBottom: 30 }]}>Instellingen</Text>
+
+        <View style={styles.section}>
+          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+            <IconSymbol size={24} name="arrow.right.square" color={colors.error} />
+            <Text style={[styles.menuText, { color: colors.error }]}>Uitloggen</Text>
+            <IconSymbol size={20} name="chevron.right" color={colors.muted} />
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    marginBottom: 30,
-  },
-  section: {
-    backgroundColor: '#F2F2F7',
-    borderRadius: 10,
-    marginBottom: 20,
-  },
-  menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E5E5EA',
-  },
-  menuText: {
-    fontSize: 16,
-    marginLeft: 12,
-    flex: 1,
-  },
-});

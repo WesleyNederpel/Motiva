@@ -1,13 +1,15 @@
 import React from 'react';
 import { Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { BaseStyles } from '../constants/styles';
+import { useThemedStyles } from '../hooks/use-themed-styles';
 
 export default function LoadingScreen() {
+  const styles = useThemedStyles();
+
   return (
-    <SafeAreaView style={BaseStyles.centeredContainer}>
-      <Text style={BaseStyles.title}>Motiva</Text>
-      <Text style={BaseStyles.subtitle}>Laden...</Text>
+    <SafeAreaView style={styles.centeredContainer}>
+      <Text style={styles.title}>Motiva</Text>
+      <Text style={styles.subtitle}>Laden...</Text>
     </SafeAreaView>
   );
 }
