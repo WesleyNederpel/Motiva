@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { createClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!
@@ -7,4 +8,37 @@ if (!supabaseUrl || !supabaseAnonKey) {
     throw new Error('Missing EXPO_PUBLIC_SUPABASE_URL or EXPO_PUBLIC_SUPABASE_ANON_KEY environment variables')
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
+// Custom storage adapter for AsyncStorage with proper Promise handling
+const AsyncStorageAdapter = {
+    getItem: async (key: string) => {
+        try {
+            return await AsyncStorage.getItem(key)
+        } catch (error) {
+            console.error('AsyncStorage getItem error:', error)
+            return null
+        }
+    },
+    setItem: async (key: string, value: string) => {
+        try {
+            await AsyncStorage.setItem(key, value)
+        } catch (error) {
+            console.error('AsyncStorage setItem error:', error)
+        }
+    },
+    removeItem: async (key: string) => {
+        try {
+            await AsyncStorage.removeItem(key)
+        } catch (error) {
+            console.error('AsyncStorage removeItem error:', error)
+        }
+    },
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+        storage: AsyncStorageAdapter,
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: false,
+    },
+})
