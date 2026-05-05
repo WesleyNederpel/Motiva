@@ -131,10 +131,19 @@ export const AuthStyles = StyleSheet.create({
   content: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: Spacing.xxl,
+    paddingHorizontal: Spacing.xl,
   },
   form: {
     width: '100%',
+  },
+  authContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    paddingHorizontal: Spacing.xl,
+  },
+  authForm: {
+    width: '100%',
+    maxWidth: 400,
   },
 });
 

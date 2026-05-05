@@ -1,4 +1,4 @@
-import { BaseStyles, DashboardStyles } from '@/constants/styles';
+import { AuthStyles, BaseStyles, DashboardStyles } from '@/constants/styles';
 import { Colors } from '@/constants/theme';
 import { useMemo } from 'react';
 import { useColorScheme } from './use-color-scheme';
@@ -192,6 +192,13 @@ export function useThemedStyles() {
         DashboardStyles.addSubtaskButtonText,
         { color: theme.secondary }
       ],
+      // Auth-specific styles
+      authContainer: [
+        AuthStyles.authContainer,
+        { backgroundColor: theme.background }
+      ],
+      authForm: AuthStyles.authForm,
+
       // Settings-specific styles
       section: {
         backgroundColor: theme.surface,

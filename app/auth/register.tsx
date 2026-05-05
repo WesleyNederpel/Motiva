@@ -56,57 +56,55 @@ export default function RegisterScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView style={styles.centeredContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <View style={styles.innerContainer}>
+      <KeyboardAvoidingView style={styles.authContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <View style={styles.authForm}>
           <Text style={styles.title}>Motiva</Text>
           <Text style={styles.subtitle}>Maak een nieuw account</Text>
 
-          <View style={styles.innerContainer}>
-            <TextInput
-              style={styles.input}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-              placeholderTextColor={colors.placeholder}
-              autoCapitalize="none"
-              keyboardType="email-address"
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+            placeholderTextColor={colors.placeholder}
+            autoCapitalize="none"
+            keyboardType="email-address"
+          />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Wachtwoord"
-              value={password}
-              onChangeText={setPassword}
-              placeholderTextColor={colors.placeholder}
-              secureTextEntry
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Wachtwoord"
+            value={password}
+            onChangeText={setPassword}
+            placeholderTextColor={colors.placeholder}
+            secureTextEntry
+          />
 
-            <TextInput
-              style={styles.input}
-              placeholder="Bevestig wachtwoord"
-              value={confirmPassword}
-              onChangeText={setConfirmPassword}
-              placeholderTextColor={colors.placeholder}
-              secureTextEntry
-            />
+          <TextInput
+            style={styles.input}
+            placeholder="Bevestig wachtwoord"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            placeholderTextColor={colors.placeholder}
+            secureTextEntry
+          />
 
-            <TouchableOpacity
-              style={[styles.button, loading && styles.buttonDisabled]}
-              onPress={signUpWithEmail}
-              disabled={loading}
-            >
-              <Text style={styles.buttonText}>
-                {loading ? 'Bezig...' : 'Registreren'}
-              </Text>
-            </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.button, loading && styles.buttonDisabled]}
+            onPress={signUpWithEmail}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>
+              {loading ? 'Bezig...' : 'Registreren'}
+            </Text>
+          </TouchableOpacity>
 
-            <TouchableOpacity
-              style={styles.linkButton}
-              onPress={() => router.replace('/auth/login')}
-            >
-              <Text style={styles.linkText}>Al een account? Log hier in</Text>
-            </TouchableOpacity>
-          </View>
+          <TouchableOpacity
+            style={styles.linkButton}
+            onPress={() => router.replace('/auth/login')}
+          >
+            <Text style={styles.linkText}>Al een account? Log hier in</Text>
+          </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
