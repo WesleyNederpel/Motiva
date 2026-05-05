@@ -34,7 +34,7 @@ export default function SettingsScreen() {
         <Text style={[styles.title, { marginBottom: 30 }]}>Instellingen</Text>
 
         <View style={styles.section}>
-          <TouchableOpacity style={styles.menuItem} onPress={handleLogout}>
+          <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} onPress={handleLogout}>
             <IconSymbol size={24} name="arrow.right.square" color={colors.error} />
             <Text style={[styles.menuText, { color: colors.error }]}>Uitloggen</Text>
             <IconSymbol size={20} name="chevron.right" color={colors.muted} />

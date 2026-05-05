@@ -234,7 +234,7 @@ export function useThemedStyles() {
       } as const,
       progressFill: {
         height: '100%',
-        backgroundColor: theme.primary,
+        backgroundColor: '#BF1A2F',
         borderRadius: 4,
       } as const,
       progressText: {
