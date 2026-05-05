@@ -1,8 +1,11 @@
-import { StyleSheet } from 'react-native';
-import { Colors as ThemeColors } from './theme';
+import { StyleSheet, useColorScheme } from 'react-native';
+import { Colors } from './theme';
 
 // Theme-aware color getter (will be used in components)
-export const useThemeColors = () => ThemeColors;
+export function useThemeColors() {
+  const colorScheme = useColorScheme() ?? 'light';
+  return Colors[colorScheme];
+}
 
 // Common spacing values
 export const Spacing = {
@@ -171,13 +174,16 @@ export const DashboardStyles = StyleSheet.create({
   addTaskButtons: {
     flexDirection: 'row',
     gap: Spacing.md,
+    justifyContent: 'space-between',
   },
   cancelButton: {
+    flex: 1,
   },
   cancelButtonText: {
     fontWeight: '600',
   },
   saveButton: {
+    flex: 1,
   },
   saveButtonText: {
     fontWeight: '600',
@@ -213,6 +219,7 @@ export const DashboardStyles = StyleSheet.create({
   addSubtaskButtons: {
     flexDirection: 'row',
     gap: Spacing.sm,
+    justifyContent: 'space-between',
   },
   taskContent: {
     flexDirection: 'row',

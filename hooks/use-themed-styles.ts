@@ -51,7 +51,7 @@ export function useThemedStyles() {
       ],
       buttonText: [
         BaseStyles.buttonText,
-        { color: theme.background }
+        { color: theme.text }
       ],
       linkButton: BaseStyles.linkButton,
       linkText: [
@@ -81,7 +81,7 @@ export function useThemedStyles() {
       ],
       checkmark: [
         BaseStyles.checkmark,
-        { color: theme.background }
+        { color: theme.text }
       ],
       deleteButton: BaseStyles.deleteButton,
       deleteButtonText: [
@@ -98,13 +98,16 @@ export function useThemedStyles() {
       ],
       addButtonText: [
         DashboardStyles.addButtonText,
-        { color: theme.background }
+        { color: 'white' }
       ],
       addTaskContainer: [
         DashboardStyles.addTaskContainer,
         { backgroundColor: theme.surface }
       ],
-      addTaskButtons: DashboardStyles.addTaskButtons,
+      addTaskButtons: [
+        DashboardStyles.addTaskButtons,
+        { backgroundColor: theme.surface }
+      ],
       cancelButton: [
         DashboardStyles.cancelButton,
         { backgroundColor: theme.disabled }
@@ -119,7 +122,7 @@ export function useThemedStyles() {
       ],
       saveButtonText: [
         DashboardStyles.saveButtonText,
-        { color: theme.background }
+        { color: 'white' }
       ],
       taskList: DashboardStyles.taskList,
       emptyState: DashboardStyles.emptyState,
@@ -127,14 +130,26 @@ export function useThemedStyles() {
         DashboardStyles.emptyText,
         { color: theme.muted }
       ],
-      taskRow: DashboardStyles.taskRow,
-      taskActions: DashboardStyles.taskActions,
-      taskTitleContainer: DashboardStyles.taskTitleContainer,
+      taskRow: [
+        DashboardStyles.taskRow,
+        { backgroundColor: theme.surface }
+      ],
+      taskActions: [
+        DashboardStyles.taskActions,
+        { backgroundColor: theme.surface }
+      ],
+      taskTitleContainer: [
+        DashboardStyles.taskTitleContainer,
+        { backgroundColor: theme.surface }
+      ],
       subtasksContainer: [
         DashboardStyles.subtasksContainer,
-        { borderTopColor: theme.border }
+        { backgroundColor: theme.surface, borderTopColor: theme.border }
       ],
-      addSubtaskButtons: DashboardStyles.addSubtaskButtons,
+      addSubtaskButtons: [
+        DashboardStyles.addSubtaskButtons,
+        { backgroundColor: theme.surface }
+      ],
       taskContent: DashboardStyles.taskContent,
       taskTitle: [
         DashboardStyles.taskTitle,
@@ -153,7 +168,10 @@ export function useThemedStyles() {
         { color: theme.primary }
       ],
       rewardText: DashboardStyles.rewardText,
-      subtaskTitleContainer: DashboardStyles.subtaskTitleContainer,
+      subtaskTitleContainer: [
+        DashboardStyles.subtaskTitleContainer,
+        { backgroundColor: theme.surface }
+      ],
       subtaskDeadlineText: [
         DashboardStyles.subtaskDeadlineText,
         { color: theme.primary }
@@ -224,6 +242,7 @@ export function useThemedStyles() {
         alignItems: 'center' as const,
         marginTop: 8,
         gap: 8,
+        backgroundColor: theme.surface,
       } as const,
       progressBar: {
         flex: 1,
