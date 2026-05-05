@@ -152,6 +152,7 @@ export function useThemedStyles() {
         DashboardStyles.deadlineText,
         { color: theme.primary }
       ],
+      rewardText: DashboardStyles.rewardText,
       subtaskTitleContainer: DashboardStyles.subtaskTitleContainer,
       subtaskDeadlineText: [
         DashboardStyles.subtaskDeadlineText,
@@ -209,6 +210,32 @@ export function useThemedStyles() {
         marginLeft: 12,
         flex: 1,
         color: theme.text,
+      } as const,
+      // Progress bar styles
+      progressContainer: {
+        flexDirection: 'row' as const,
+        alignItems: 'center' as const,
+        marginTop: 8,
+        gap: 8,
+      } as const,
+      progressBar: {
+        flex: 1,
+        height: 8,
+        backgroundColor: theme.inputBackground,
+        borderRadius: 4,
+        overflow: 'hidden' as const,
+      } as const,
+      progressFill: {
+        height: '100%',
+        backgroundColor: theme.primary,
+        borderRadius: 4,
+      } as const,
+      progressText: {
+        fontSize: 12,
+        color: theme.secondary,
+        fontWeight: '600' as const,
+        minWidth: 35,
+        textAlign: 'right' as const,
       } as const,
     };
   }, [colorScheme, theme]);

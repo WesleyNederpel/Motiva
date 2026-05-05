@@ -225,6 +225,11 @@ export const DashboardStyles = StyleSheet.create({
     fontSize: FontSizes.xs,
     marginTop: 2,
   },
+  rewardText: {
+    fontSize: FontSizes.xs,
+    marginTop: 2,
+    color: '#10b981', // Green color for rewards
+  },
   subtaskTitleContainer: {
     flex: 1,
   },

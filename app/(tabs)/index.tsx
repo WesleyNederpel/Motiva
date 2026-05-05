@@ -15,6 +15,7 @@ interface Task {
   created_at: string;
   updated_at: string;
   deadline?: string | null;
+  reward?: string | null;
   subtasks?: Subtask[];
 }
 
@@ -39,6 +40,7 @@ export default function DashboardScreen() {
   const [newSubtaskTitles, setNewSubtaskTitles] = useState<{ [key: string]: string }>({});
   const [showAddSubtask, setShowAddSubtask] = useState<{ [key: string]: boolean }>({});
   const [newTaskDeadline, setNewTaskDeadline] = useState<Date | null>(null);
+  const [newTaskReward, setNewTaskReward] = useState('');
   const [newSubtaskDeadlines, setNewSubtaskDeadlines] = useState<{ [key: string]: Date | null }>({});
   const [showTaskDatePicker, setShowTaskDatePicker] = useState(false);
   const [showSubtaskDatePicker, setShowSubtaskDatePicker] = useState<{ [key: string]: boolean }>({});
@@ -46,6 +48,36 @@ export default function DashboardScreen() {
   // Theme-aware styles
   const styles = useThemedStyles();
   const colors = useThemeColors();
+
+  // Progress bar component
+  const ProgressBar = ({ task }: { task: Task }) => {
+    let percentage = 0;
+
+    if (task.subtasks && task.subtasks.length > 0) {
+      // Calculate based on subtasks
+      const completed = task.subtasks.filter(st => st.completed).length;
+      percentage = Math.round((completed / task.subtasks.length) * 100);
+    } else {
+      // Use task completion when no subtasks
+      percentage = task.completed ? 100 : 0;
+    }
+
+    return (
+      <ThemedView style={styles.progressContainer}>
+        <ThemedView style={styles.progressBar}>
+          <ThemedView
+            style={[
+              styles.progressFill,
+              { width: `${percentage}%` }
+            ]}
+          />
+        </ThemedView>
+        <ThemedText style={styles.progressText}>
+          {percentage}%
+        </ThemedText>
+      </ThemedView>
+    );
+  };
 
   // Check user authentication
   const checkUser = async () => {
@@ -118,6 +150,7 @@ export default function DashboardScreen() {
           completed: false,
           user_id: user.id,
           deadline: newTaskDeadline ? newTaskDeadline.toISOString() : null,
+          reward: newTaskReward.trim() || null,
         })
         .select()
         .single();
@@ -131,6 +164,7 @@ export default function DashboardScreen() {
       setTasks([data, ...tasks]);
       setNewTaskTitle('');
       setNewTaskDeadline(null);
+      setNewTaskReward('');
       setShowAddTask(false);
     } catch (error) {
       console.error('Unexpected error:', error);
@@ -142,21 +176,46 @@ export default function DashboardScreen() {
     const task = tasks.find(t => t.id === taskId);
     if (!task) return;
 
+    const newCompletedState = !task.completed;
+
     try {
-      const { error } = await supabase
+      // Update main task
+      const { error: taskError } = await supabase
         .from('tasks')
-        .update({ completed: !task.completed })
+        .update({ completed: newCompletedState })
         .eq('id', taskId);
 
-      if (error) {
-        console.error('Error updating task:', error);
+      if (taskError) {
+        console.error('Error updating task:', taskError);
         Alert.alert('Error', 'Failed to update task');
         return;
       }
 
-      setTasks(tasks.map(t =>
-        t.id === taskId ? { ...t, completed: !t.completed } : t
-      ));
+      // If task has subtasks, update all subtasks to match the main task state
+      if (task.subtasks && task.subtasks.length > 0) {
+        const { error: subtaskError } = await supabase
+          .from('subtasks')
+          .update({ completed: newCompletedState })
+          .eq('task_id', taskId);
+
+        if (subtaskError) {
+          console.error('Error updating subtasks:', subtaskError);
+          Alert.alert('Error', 'Failed to update subtasks');
+          return;
+        }
+      }
+
+      // Update local state
+      setTasks(tasks.map(t => {
+        if (t.id === taskId) {
+          return {
+            ...t,
+            completed: newCompletedState,
+            subtasks: t.subtasks?.map(s => ({ ...s, completed: newCompletedState }))
+          };
+        }
+        return t;
+      }));
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
@@ -259,30 +318,59 @@ export default function DashboardScreen() {
     const subtask = task?.subtasks?.find(s => s.id === subtaskId);
     if (!subtask) return;
 
+    const newSubtaskCompleted = !subtask.completed;
+
     try {
-      const { error } = await supabase
+      // Update the subtask
+      const { error: subtaskError } = await supabase
         .from('subtasks')
-        .update({ completed: !subtask.completed })
+        .update({ completed: newSubtaskCompleted })
         .eq('id', subtaskId);
 
-      if (error) {
-        console.error('Error updating subtask:', error);
+      if (subtaskError) {
+        console.error('Error updating subtask:', subtaskError);
         Alert.alert('Error', 'Failed to update subtask');
         return;
       }
 
-      // Update local state
-      setTasks(tasks.map(task => {
+      // Update local state first to calculate the new task state
+      const updatedTasks = tasks.map(task => {
         if (task.id === taskId) {
+          const updatedSubtasks = task.subtasks?.map(s =>
+            s.id === subtaskId ? { ...s, completed: newSubtaskCompleted } : s
+          );
+
+          // Check if all subtasks are now completed
+          const allSubtasksCompleted = updatedSubtasks && updatedSubtasks.length > 0 &&
+            updatedSubtasks.every(s => s.completed);
+
           return {
             ...task,
-            subtasks: task.subtasks?.map(s =>
-              s.id === subtaskId ? { ...s, completed: !s.completed } : s
-            )
+            subtasks: updatedSubtasks,
+            completed: allSubtasksCompleted || false
           };
         }
         return task;
-      }));
+      });
+
+      // Update the main task if all subtasks are completed
+      const updatedTask = updatedTasks.find(t => t.id === taskId);
+      if (updatedTask && updatedTask.subtasks && updatedTask.subtasks.length > 0) {
+        const allSubtasksCompleted = updatedTask.subtasks.every(s => s.completed);
+
+        const { error: taskError } = await supabase
+          .from('tasks')
+          .update({ completed: allSubtasksCompleted })
+          .eq('id', taskId);
+
+        if (taskError) {
+          console.error('Error updating task:', taskError);
+          Alert.alert('Error', 'Failed to update task');
+          return;
+        }
+      }
+
+      setTasks(updatedTasks);
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
@@ -341,6 +429,13 @@ export default function DashboardScreen() {
               placeholderTextColor={colors.placeholder}
               autoFocus
             />
+            <TextInput
+              style={styles.input}
+              placeholder="Enter reward (optional)..."
+              value={newTaskReward}
+              onChangeText={setNewTaskReward}
+              placeholderTextColor={colors.placeholder}
+            />
             <TouchableOpacity
               style={styles.input}
               onPress={() => setShowTaskDatePicker(true)}
@@ -369,6 +464,7 @@ export default function DashboardScreen() {
                   setShowAddTask(false);
                   setNewTaskTitle('');
                   setNewTaskDeadline(null);
+                  setNewTaskReward('');
                 }}
               >
                 <ThemedText style={styles.cancelButtonText}>Cancel</ThemedText>
@@ -421,11 +517,12 @@ export default function DashboardScreen() {
                           📅 Due: {new Date(task.deadline).toLocaleDateString()}
                         </ThemedText>
                       )}
-                      {task.subtasks && task.subtasks.length > 0 && (
-                        <ThemedText style={styles.subtaskCount}>
-                          {task.subtasks.filter(st => st.completed).length}/{task.subtasks.length} completed
+                      {task.reward && (
+                        <ThemedText style={styles.rewardText}>
+                          🎁 Reward: {task.reward}
                         </ThemedText>
                       )}
+                      <ProgressBar task={task} />
                     </ThemedView>
                   </TouchableOpacity>
                   <ThemedView style={styles.taskActions}>
