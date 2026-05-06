@@ -23,12 +23,12 @@ export default function LoginScreen() {
       });
 
       if (error) {
-        Alert.alert('Fout', error.message);
+        Alert.alert('Error', error.message);
       } else {
         router.replace('/(tabs)');
       }
     } catch (error) {
-      Alert.alert('Fout', 'Er is iets misgegaan. Probeer het opnieuw.');
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -39,7 +39,7 @@ export default function LoginScreen() {
       <KeyboardAvoidingView style={styles.authContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.authForm}>
           <Text style={styles.title}>Motiva</Text>
-          <Text style={styles.subtitle}>Log in om verder te gaan</Text>
+          <Text style={styles.subtitle}>Log in to continue</Text>
 
           <TextInput
             style={styles.input}
@@ -53,7 +53,7 @@ export default function LoginScreen() {
 
           <TextInput
             style={styles.input}
-            placeholder="Wachtwoord"
+            placeholder="Password"
             value={password}
             onChangeText={setPassword}
             placeholderTextColor={colors.placeholder}
@@ -66,7 +66,7 @@ export default function LoginScreen() {
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? 'Bezig...' : 'Inloggen'}
+              {loading ? 'Loading...' : 'Log In'}
             </Text>
           </TouchableOpacity>
 
@@ -74,7 +74,7 @@ export default function LoginScreen() {
             style={styles.linkButton}
             onPress={() => router.replace('/auth/register')}
           >
-            <Text style={styles.linkText}>Nog geen account? Registreer hier</Text>
+            <Text style={styles.linkText}>Don't have an account? Register here</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

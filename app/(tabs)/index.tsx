@@ -502,7 +502,7 @@ export default function DashboardScreen() {
                       task.completed && styles.checkboxChecked
                     ]}>
                       {task.completed && (
-                        <ThemedText style={styles.checkmark}>✓</ThemedText>
+                        <ThemedText style={styles.checkmark}>Done</ThemedText>
                       )}
                     </ThemedView>
                     <ThemedView style={styles.taskTitleContainer}>
@@ -514,12 +514,12 @@ export default function DashboardScreen() {
                       </ThemedText>
                       {task.deadline && (
                         <ThemedText style={styles.deadlineText}>
-                          📅 Due: {new Date(task.deadline).toLocaleDateString()}
+                          Due: {new Date(task.deadline).toLocaleDateString()}
                         </ThemedText>
                       )}
                       {task.reward && (
                         <ThemedText style={styles.rewardText}>
-                          🎁 Reward: {task.reward}
+                          Reward: {task.reward}
                         </ThemedText>
                       )}
                       <ProgressBar task={task} />
@@ -612,7 +612,7 @@ export default function DashboardScreen() {
                             subtask.completed && styles.checkboxChecked
                           ]}>
                             {subtask.completed && (
-                              <ThemedText style={styles.checkmark}>✓</ThemedText>
+                              <ThemedText style={styles.checkmark}>Done</ThemedText>
                             )}
                           </ThemedView>
                           <ThemedView style={styles.subtaskTitleContainer}>
@@ -624,7 +624,7 @@ export default function DashboardScreen() {
                             </ThemedText>
                             {subtask.deadline && (
                               <ThemedText style={styles.subtaskDeadlineText}>
-                                📅 Due: {new Date(subtask.deadline).toLocaleDateString()}
+                                Due: {new Date(subtask.deadline).toLocaleDateString()}
                               </ThemedText>
                             )}
                           </ThemedView>

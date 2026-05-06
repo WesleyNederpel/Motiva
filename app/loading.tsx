@@ -9,7 +9,7 @@ export default function LoadingScreen() {
   return (
     <SafeAreaView style={styles.centeredContainer}>
       <Text style={styles.title}>Motiva</Text>
-      <Text style={styles.subtitle}>Laden...</Text>
+      <Text style={styles.subtitle}>Loading...</Text>
     </SafeAreaView>
   );
 }

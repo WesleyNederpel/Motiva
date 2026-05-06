@@ -17,12 +17,12 @@ export default function RegisterScreen() {
 
   async function signUpWithEmail() {
     if (password !== confirmPassword) {
-      Alert.alert('Fout', 'Wachtwoorden komen niet overeen');
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
     if (password.length < 6) {
-      Alert.alert('Fout', 'Wachtwoord moet minimaal 6 tekens lang zijn');
+      Alert.alert('Error', 'Password must be at least 6 characters long');
       return;
     }
 
@@ -34,11 +34,11 @@ export default function RegisterScreen() {
       });
 
       if (error) {
-        Alert.alert('Fout', error.message);
+        Alert.alert('Error', error.message);
       } else {
         Alert.alert(
-          'Succes',
-          'Account is aangemaakt! Controleer je email voor bevestiging.',
+          'Success',
+          'Account created! Please check your email for confirmation.',
           [
             {
               text: 'OK',
@@ -48,7 +48,7 @@ export default function RegisterScreen() {
         );
       }
     } catch (error) {
-      Alert.alert('Fout', 'Er is iets misgegaan. Probeer het opnieuw.');
+      Alert.alert('Error', 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export default function RegisterScreen() {
       <KeyboardAvoidingView style={styles.authContainer} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
         <View style={styles.authForm}>
           <Text style={styles.title}>Motiva</Text>
-          <Text style={styles.subtitle}>Maak een nieuw account</Text>
+          <Text style={styles.subtitle}>Create a new account</Text>
 
           <TextInput
             style={styles.input}
@@ -73,7 +73,7 @@ export default function RegisterScreen() {
 
           <TextInput
             style={styles.input}
-            placeholder="Wachtwoord"
+            placeholder="Password"
             value={password}
             onChangeText={setPassword}
             placeholderTextColor={colors.placeholder}
@@ -82,7 +82,7 @@ export default function RegisterScreen() {
 
           <TextInput
             style={styles.input}
-            placeholder="Bevestig wachtwoord"
+            placeholder="Confirm Password"
             value={confirmPassword}
             onChangeText={setConfirmPassword}
             placeholderTextColor={colors.placeholder}
@@ -95,7 +95,7 @@ export default function RegisterScreen() {
             disabled={loading}
           >
             <Text style={styles.buttonText}>
-              {loading ? 'Bezig...' : 'Registreren'}
+              {loading ? 'Loading...' : 'Register'}
             </Text>
           </TouchableOpacity>
 
@@ -103,7 +103,7 @@ export default function RegisterScreen() {
             style={styles.linkButton}
             onPress={() => router.replace('/auth/login')}
           >
-            <Text style={styles.linkText}>Al een account? Log hier in</Text>
+            <Text style={styles.linkText}>Already have an account? Log in here</Text>
           </TouchableOpacity>
         </View>
       </KeyboardAvoidingView>

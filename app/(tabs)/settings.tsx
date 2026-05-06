@@ -12,12 +12,12 @@ export default function SettingsScreen() {
 
   const handleLogout = () => {
     Alert.alert(
-      'Uitloggen',
-      'Weet je zeker dat je wilt uitloggen?',
+      'Log Out',
+      'Are you sure you want to log out?',
       [
-        { text: 'Annuleer', style: 'cancel' },
+        { text: 'Cancel', style: 'cancel' },
         {
-          text: 'Uitloggen',
+          text: 'Log Out',
           style: 'destructive',
           onPress: async () => {
             await supabase.auth.signOut();
@@ -31,12 +31,12 @@ export default function SettingsScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ padding: 20 }}>
-        <Text style={[styles.title, { marginBottom: 30 }]}>Instellingen</Text>
+        <Text style={[styles.title, { marginBottom: 30 }]}>Settings</Text>
 
         <View style={styles.section}>
           <TouchableOpacity style={[styles.menuItem, { borderBottomWidth: 0 }]} onPress={handleLogout}>
             <IconSymbol size={24} name="arrow.right.square" color={colors.error} />
-            <Text style={[styles.menuText, { color: colors.error }]}>Uitloggen</Text>
+            <Text style={[styles.menuText, { color: colors.error }]}>Log Out</Text>
             <IconSymbol size={20} name="chevron.right" color={colors.muted} />
           </TouchableOpacity>
         </View>
