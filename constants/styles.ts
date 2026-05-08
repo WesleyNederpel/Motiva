@@ -110,6 +110,9 @@ export const BaseStyles = StyleSheet.create({
   },
   checkmark: {
     fontWeight: 'bold',
+    textAlign: 'center',
+    lineHeight: 20,
+    fontSize: 16,
   },
   deleteButton: {
     padding: Spacing.sm,
@@ -122,7 +125,17 @@ export const BaseStyles = StyleSheet.create({
   subtaskCheckbox: {
     width: 20,
     height: 20,
+    borderWidth: 2,
+    borderRadius: BorderRadius.sm,
     marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  subtaskCheckmark: {
+    fontWeight: 'bold',
+    textAlign: 'center',
+    lineHeight: 16,
+    fontSize: 14,
   },
 });
 

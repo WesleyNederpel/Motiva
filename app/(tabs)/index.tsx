@@ -103,7 +103,7 @@ export default function DashboardScreen() {
           *,
           subtasks (*)
         `)
-        .order('created_at', { ascending: false });
+        .order('deadline', { ascending: true });
 
       if (error) {
         console.error('Error fetching tasks:', error);
@@ -111,7 +111,21 @@ export default function DashboardScreen() {
         return;
       }
 
-      setTasks(data || []);
+      // Sort subtasks by deadline within each task
+      const sortedData = (data || []).map(task => ({
+        ...task,
+        subtasks: task.subtasks?.sort((a: Subtask, b: Subtask) => {
+          // Handle null deadlines - put them at the end
+          if (!a.deadline && !b.deadline) return 0;
+          if (!a.deadline) return 1;
+          if (!b.deadline) return -1;
+
+          // Compare dates
+          return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+        })
+      }));
+
+      setTasks(sortedData);
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
@@ -161,7 +175,18 @@ export default function DashboardScreen() {
         return;
       }
 
-      setTasks([data, ...tasks]);
+      // Insert new task in correct deadline order
+      const updatedTasks = [...tasks, data];
+      updatedTasks.sort((a: Task, b: Task) => {
+        // Handle null deadlines - put them at the end
+        if (!a.deadline && !b.deadline) return 0;
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+
+        // Compare dates
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      });
+      setTasks(updatedTasks);
       setNewTaskTitle('');
       setNewTaskDeadline(null);
       setNewTaskReward('');
@@ -295,9 +320,20 @@ export default function DashboardScreen() {
       // Update local state
       setTasks(tasks.map(task => {
         if (task.id === taskId) {
+          const updatedSubtasks = [...(task.subtasks || []), data];
+          // Sort subtasks by deadline
+          updatedSubtasks.sort((a: Subtask, b: Subtask) => {
+            // Handle null deadlines - put them at the end
+            if (!a.deadline && !b.deadline) return 0;
+            if (!a.deadline) return 1;
+            if (!b.deadline) return -1;
+
+            // Compare dates
+            return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+          });
           return {
             ...task,
-            subtasks: [...(task.subtasks || []), data]
+            subtasks: updatedSubtasks
           };
         }
         return task;
@@ -502,7 +538,7 @@ export default function DashboardScreen() {
                       task.completed && styles.checkboxChecked
                     ]}>
                       {task.completed && (
-                        <ThemedText style={styles.checkmark}>Done</ThemedText>
+                        <ThemedText style={styles.checkmark}>✓</ThemedText>
                       )}
                     </ThemedView>
                     <ThemedView style={styles.taskTitleContainer}>
@@ -612,7 +648,7 @@ export default function DashboardScreen() {
                             subtask.completed && styles.checkboxChecked
                           ]}>
                             {subtask.completed && (
-                              <ThemedText style={styles.checkmark}>Done</ThemedText>
+                              <ThemedText style={styles.subtaskCheckmark}>✓</ThemedText>
                             )}
                           </ThemedView>
                           <ThemedView style={styles.subtaskTitleContainer}>

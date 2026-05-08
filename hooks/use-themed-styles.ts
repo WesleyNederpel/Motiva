@@ -83,6 +83,10 @@ export function useThemedStyles() {
         BaseStyles.checkmark,
         { color: theme.text }
       ],
+      subtaskCheckmark: [
+        BaseStyles.subtaskCheckmark,
+        { color: theme.text }
+      ],
       deleteButton: BaseStyles.deleteButton,
       deleteButtonText: [
         BaseStyles.deleteButtonText,
