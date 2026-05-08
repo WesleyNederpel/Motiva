@@ -170,19 +170,31 @@ export const DashboardStyles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: Spacing.xl,
+    paddingHorizontal: 2,
   },
-  addButton: {
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.lg,
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    lineHeight: 34,
   },
-  addButtonText: {
-    fontWeight: '600',
+  addCircleButton: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  addCircleButtonText: {
+    color: '#FFFFFF',
+    fontSize: 24,
+    lineHeight: 26,
+    fontWeight: '400',
+    marginTop: -1,
   },
   addTaskContainer: {
     padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    marginBottom: Spacing.xl,
+    borderRadius: 16,
+    marginBottom: Spacing.lg,
   },
   addTaskButtons: {
     flexDirection: 'row',
@@ -194,12 +206,14 @@ export const DashboardStyles = StyleSheet.create({
   },
   cancelButtonText: {
     fontWeight: '600',
+    textAlign: 'center',
   },
   saveButton: {
     flex: 1,
   },
   saveButtonText: {
     fontWeight: '600',
+    textAlign: 'center',
   },
   taskList: {
     flex: 1,
@@ -212,6 +226,142 @@ export const DashboardStyles = StyleSheet.create({
   emptyText: {
     fontSize: FontSizes.md,
   },
+  // Task card
+  taskCard: {
+    borderRadius: 16,
+    marginBottom: Spacing.md,
+    padding: Spacing.lg,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  taskCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+  },
+  taskTitleArea: {
+    flex: 1,
+    paddingRight: Spacing.sm,
+  },
+  taskTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    lineHeight: 24,
+  },
+  taskTitleCompleted: {
+    textDecorationLine: 'line-through',
+    opacity: 0.5,
+  },
+  taskIcons: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+  iconButton: {
+    padding: 6,
+  },
+  deleteIconText: {
+    fontSize: 17,
+  },
+  editIconText: {
+    fontSize: 17,
+  },
+  chevronText: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  // Progress bar
+  progressTrackContainer: {
+    height: 6,
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginBottom: 8,
+  },
+  progressFillBar: {
+    height: '100%',
+    backgroundColor: '#BF1A2F',
+    borderRadius: 3,
+  },
+  // Date label
+  dateLabel: {
+    fontSize: FontSizes.xs,
+    textAlign: 'center',
+    marginBottom: 2,
+  },
+  // Subtasks section
+  subtasksSection: {
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
+    borderTopWidth: 1,
+  },
+  subtaskItemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  subtaskContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+  },
+  subtaskCheckbox: {
+    width: 22,
+    height: 22,
+    borderRadius: 4,
+    borderWidth: 2,
+    marginRight: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  subtaskCheckboxDone: {
+    borderWidth: 0,
+  },
+  subtaskCheckmarkText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: 'bold',
+    lineHeight: 16,
+  },
+  subtaskTitle: {
+    fontSize: FontSizes.sm,
+  },
+  // Add subtask
+  addSubtaskContainer: {
+    paddingTop: Spacing.sm,
+    marginBottom: Spacing.sm,
+  },
+  addSubtaskButtons: {
+    flexDirection: 'row',
+    gap: Spacing.sm,
+    justifyContent: 'space-between',
+  },
+  subtaskInput: {
+    borderWidth: 1,
+    borderRadius: BorderRadius.md,
+    padding: 10,
+    marginBottom: Spacing.sm,
+    fontSize: FontSizes.sm,
+  },
+  addSubtaskButton: {
+    paddingVertical: 8,
+    alignItems: 'center',
+    marginTop: 4,
+  },
+  addSubtaskButtonText: {
+    fontSize: FontSizes.sm,
+    fontWeight: '500',
+  },
+  // Edit form
+  editFormButtons: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    justifyContent: 'space-between',
+    marginTop: Spacing.sm,
+  },
+  // Legacy / shared
   taskRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -229,21 +379,12 @@ export const DashboardStyles = StyleSheet.create({
     paddingTop: Spacing.md,
     borderTopWidth: 1,
   },
-  addSubtaskButtons: {
-    flexDirection: 'row',
-    gap: Spacing.sm,
-    justifyContent: 'space-between',
-  },
   taskContent: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
-  taskTitle: {
-    flex: 1,
-    fontSize: FontSizes.md,
-  },
-  taskTitleCompleted: {
+  taskTitleCompleted2: {
     textDecorationLine: 'line-through',
   },
   subtaskCount: {
@@ -256,8 +397,9 @@ export const DashboardStyles = StyleSheet.create({
   },
   rewardText: {
     fontSize: FontSizes.xs,
-    marginTop: 2,
-    color: '#10b981', // Green color for rewards
+    marginTop: 4,
+    textAlign: 'center' as const,
+    fontWeight: '500' as const,
   },
   subtaskTitleContainer: {
     flex: 1,
@@ -273,47 +415,11 @@ export const DashboardStyles = StyleSheet.create({
   expandButtonText: {
     fontSize: FontSizes.md,
   },
-  addSubtaskContainer: {
-    padding: Spacing.md,
-    borderRadius: BorderRadius.md,
-    marginBottom: Spacing.sm,
-  },
-  subtaskInput: {
-    borderWidth: 1,
-    borderRadius: BorderRadius.md,
-    padding: 10,
-    marginBottom: Spacing.sm,
-    fontSize: FontSizes.sm,
-  },
   subtaskItem: {
     flexDirection: 'row',
     alignItems: 'center',
     padding: 10,
     marginBottom: 6,
     borderRadius: BorderRadius.md,
-  },
-  subtaskContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    flex: 1,
-  },
-  subtaskCheckbox: {
-    width: 20,
-    height: 20,
-    marginRight: 10,
-  },
-  subtaskTitle: {
-    flex: 1,
-    fontSize: FontSizes.sm,
-  },
-  addSubtaskButton: {
-    padding: 10,
-    borderRadius: BorderRadius.md,
-    alignItems: 'center',
-    marginTop: 4,
-  },
-  addSubtaskButtonText: {
-    fontSize: FontSizes.sm,
-    fontWeight: '500',
   },
 });
