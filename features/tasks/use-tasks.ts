@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 
 import { supabase } from '@/lib/supabase';
+import { triggerCelebration } from './celebration';
 import { Subtask, Task } from './types';
-import { sortSubtasksByDeadline, sortTasksByDeadline } from './utils';
+import { getTaskProgress, sortSubtasksByDeadline, sortTasksByDeadline } from './utils';
 
 export interface AddTaskInput {
   title: string;
@@ -142,6 +143,7 @@ export function useTasks() {
     if (!task) return;
 
     const newCompletedState = !task.completed;
+    const prevProgress = getTaskProgress(task);
 
     try {
       const { error: taskError } = await supabase
@@ -168,7 +170,7 @@ export function useTasks() {
         }
       }
 
-      setTasks(tasks.map(t => {
+      const nextTasks = tasks.map(t => {
         if (t.id === taskId) {
           return {
             ...t,
@@ -177,7 +179,13 @@ export function useTasks() {
           };
         }
         return t;
-      }));
+      });
+      setTasks(nextTasks);
+
+      const nextTask = nextTasks.find(t => t.id === taskId);
+      if (nextTask && prevProgress < 100 && getTaskProgress(nextTask) === 100) {
+        triggerCelebration();
+      }
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
@@ -305,9 +313,10 @@ export function useTasks() {
   const toggleSubtask = async (subtaskId: string, taskId: string) => {
     const task = tasks.find(t => t.id === taskId);
     const subtask = task?.subtasks?.find(s => s.id === subtaskId);
-    if (!subtask) return;
+    if (!task || !subtask) return;
 
     const newSubtaskCompleted = !subtask.completed;
+    const prevProgress = getTaskProgress(task);
 
     try {
       const { error: subtaskError } = await supabase
@@ -356,6 +365,11 @@ export function useTasks() {
       }
 
       setTasks(updatedTasks);
+
+      const nextTask = updatedTasks.find(t => t.id === taskId);
+      if (nextTask && prevProgress < 100 && getTaskProgress(nextTask) === 100) {
+        triggerCelebration();
+      }
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');

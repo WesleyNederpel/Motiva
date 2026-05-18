@@ -3,12 +3,13 @@ import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AddTaskForm } from '@/components/dashboard/add-task-form';
+import { CelebrationOverlay } from '@/components/dashboard/celebration-overlay';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { TaskCard } from '@/components/dashboard/task-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { useTasks } from '@/features/tasks/use-tasks';
+import { useThemedStyles } from '@/hooks/use-themed-styles';
 
 export default function DashboardScreen() {
   const styles = useThemedStyles();
@@ -77,6 +78,7 @@ export default function DashboardScreen() {
           )}
         </ScrollView>
       </ThemedView>
+      <CelebrationOverlay />
     </SafeAreaView>
   );
 }

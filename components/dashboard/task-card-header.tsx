@@ -42,11 +42,11 @@ export function TaskCardHeader({
         </ThemedText>
       </TouchableOpacity>
       <View style={styles.taskIcons}>
-        <TouchableOpacity style={styles.iconButton} onPress={onDelete}>
-          <IconSymbol size={22} name="trash" color={colors.error} />
-        </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={onEdit}>
           <IconSymbol size={22} name="pencil" color={colors.secondary} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton} onPress={onDelete}>
+          <IconSymbol size={22} name="trash" color={colors.error} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.iconButton} onPress={onToggleExpansion}>
           <IconSymbol
