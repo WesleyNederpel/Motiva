@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ScrollView } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { FlatList } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AddTaskForm } from '@/components/dashboard/add-task-form';
@@ -8,7 +8,8 @@ import { DashboardHeader } from '@/components/dashboard/dashboard-header';
 import { TaskCard } from '@/components/dashboard/task-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { useTasks } from '@/features/tasks/use-tasks';
+import { Task } from '@/features/tasks/types';
+import { AddTaskInput, useTasks } from '@/features/tasks/use-tasks';
 import { useThemedStyles } from '@/hooks/use-themed-styles';
 
 export default function DashboardScreen() {
@@ -30,11 +31,32 @@ export default function DashboardScreen() {
 
   const [showAddTask, setShowAddTask] = useState(false);
 
-  const handleAddTask: typeof addTask = async (input) => {
+  const handleAddTask = useCallback(async (input: AddTaskInput) => {
     const ok = await addTask(input);
     if (ok) setShowAddTask(false);
     return ok;
-  };
+  }, [addTask]);
+
+  const renderItem = useCallback(({ item: task }: { item: Task }) => (
+    <TaskCard
+      task={task}
+      expanded={expandedTasks.has(task.id)}
+      onToggleTask={toggleTask}
+      onDeleteTask={deleteTask}
+      onUpdateTask={updateTask}
+      onToggleExpansion={toggleTaskExpansion}
+      onAddSubtask={addSubtask}
+      onToggleSubtask={toggleSubtask}
+      onDeleteSubtask={deleteSubtask}
+      onUpdateSubtask={updateSubtask}
+    />
+  ), [
+    expandedTasks,
+    toggleTask, deleteTask, updateTask, toggleTaskExpansion,
+    addSubtask, toggleSubtask, deleteSubtask, updateSubtask,
+  ]);
+
+  const keyExtractor = useCallback((task: Task) => task.id, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,35 +70,26 @@ export default function DashboardScreen() {
           />
         )}
 
-        <ScrollView style={styles.taskList} showsVerticalScrollIndicator={false}>
-          {loading ? (
-            <ThemedView style={styles.emptyState}>
-              <ThemedText style={styles.emptyText}>Loading tasks...</ThemedText>
-            </ThemedView>
-          ) : tasks.length === 0 ? (
-            <ThemedView style={styles.emptyState}>
-              <ThemedText style={styles.emptyText}>
-                No tasks yet. Add your first task!
-              </ThemedText>
-            </ThemedView>
-          ) : (
-            tasks.map(task => (
-              <TaskCard
-                key={task.id}
-                task={task}
-                expanded={expandedTasks.has(task.id)}
-                onToggleTask={() => toggleTask(task.id)}
-                onDeleteTask={() => deleteTask(task.id)}
-                onUpdateTask={(input) => updateTask(task.id, input)}
-                onToggleExpansion={() => toggleTaskExpansion(task.id)}
-                onAddSubtask={(input) => addSubtask(task.id, input)}
-                onToggleSubtask={(subtaskId) => toggleSubtask(subtaskId, task.id)}
-                onDeleteSubtask={(subtaskId) => deleteSubtask(subtaskId, task.id)}
-                onUpdateSubtask={(subtaskId, input) => updateSubtask(subtaskId, task.id, input)}
-              />
-            ))
-          )}
-        </ScrollView>
+        {loading ? (
+          <ThemedView style={styles.emptyState}>
+            <ThemedText style={styles.emptyText}>Loading tasks...</ThemedText>
+          </ThemedView>
+        ) : (
+          <FlatList
+            data={tasks}
+            keyExtractor={keyExtractor}
+            renderItem={renderItem}
+            style={styles.taskList}
+            showsVerticalScrollIndicator={false}
+            ListEmptyComponent={
+              <ThemedView style={styles.emptyState}>
+                <ThemedText style={styles.emptyText}>
+                  No tasks yet. Add your first task!
+                </ThemedText>
+              </ThemedView>
+            }
+          />
+        )}
       </ThemedView>
       <CelebrationOverlay />
     </SafeAreaView>

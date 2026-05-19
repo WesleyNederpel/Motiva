@@ -11,10 +11,6 @@ interface SectionCardProps {
   style?: StyleProp<ViewStyle>;
 }
 
-/**
- * Themed surface with rounded corners and an optional title above.
- * Used for Account Info, Stats, Danger Zone, Appearance, etc.
- */
 export function SectionCard({ title, children, style }: SectionCardProps) {
   const colors = useThemeColors();
 

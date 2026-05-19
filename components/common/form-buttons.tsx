@@ -9,13 +9,9 @@ interface FormButtonsProps {
   onConfirm: () => void;
   confirmLabel?: string;
   cancelLabel?: string;
-  /** Which row container style key to use. Defaults to 'addTaskButtons'. */
   rowStyleKey?: 'addTaskButtons' | 'addSubtaskButtons' | 'editFormButtons';
 }
 
-/**
- * Standard Cancel/Save (or Cancel/Add) row used by the dashboard forms.
- */
 export function FormButtons({
   onCancel,
   onConfirm,

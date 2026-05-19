@@ -2,15 +2,15 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { Task } from '@/features/tasks/types';
 import { formatDeadline, getTaskProgress } from '@/features/tasks/utils';
+import { useThemedStyles } from '@/hooks/use-themed-styles';
 
 interface TaskProgressProps {
   task: Task;
 }
 
-export function TaskProgress({ task }: TaskProgressProps) {
+export const TaskProgress = React.memo(function TaskProgress({ task }: TaskProgressProps) {
   const styles = useThemedStyles();
   const progress = getTaskProgress(task);
 
@@ -33,4 +33,4 @@ export function TaskProgress({ task }: TaskProgressProps) {
       ) : null}
     </>
   );
-}
+});

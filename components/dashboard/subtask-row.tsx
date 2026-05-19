@@ -9,6 +9,8 @@ import { formatDeadline } from '@/features/tasks/utils';
 import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { SubtaskEditForm } from './subtask-edit-form';
 
+const subtaskInnerRow = { flex: 1, flexDirection: 'row' as const, alignItems: 'center' as const };
+
 interface SubtaskRowProps {
   subtask: Subtask;
   onToggle: () => void;
@@ -16,7 +18,7 @@ interface SubtaskRowProps {
   onUpdate: (input: UpdateSubtaskInput) => Promise<boolean>;
 }
 
-export function SubtaskRow({ subtask, onToggle, onDelete, onUpdate }: SubtaskRowProps) {
+export const SubtaskRow = React.memo(function SubtaskRow({ subtask, onToggle, onDelete, onUpdate }: SubtaskRowProps) {
   const styles = useThemedStyles();
   const colors = useThemeColors();
   const [isEditing, setIsEditing] = useState(false);
@@ -44,7 +46,7 @@ export function SubtaskRow({ subtask, onToggle, onDelete, onUpdate }: SubtaskRow
             <Text style={styles.subtaskCheckmarkText}>✓</Text>
           )}
         </View>
-        <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
+        <View style={subtaskInnerRow}>
           <ThemedText
             style={[
               styles.subtaskTitle,
@@ -68,4 +70,4 @@ export function SubtaskRow({ subtask, onToggle, onDelete, onUpdate }: SubtaskRow
       </TouchableOpacity>
     </View>
   );
-}
+});

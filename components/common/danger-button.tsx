@@ -7,7 +7,6 @@ import { useThemeColors } from '@/hooks/use-themed-styles';
 interface DangerButtonProps {
   label: string;
   onPress: () => void;
-  /** When true, uses a filled red background; otherwise transparent with red text. */
   filled?: boolean;
   disabled?: boolean;
 }

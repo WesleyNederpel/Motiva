@@ -1,12 +1,11 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
+import { TouchableOpacity } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { useThemeColors } from '@/hooks/use-themed-styles';
 
 interface RadioRowProps {
-  /** SF Symbol name passed to IconSymbol. */
   iconName: React.ComponentProps<typeof IconSymbol>['name'];
   label: string;
   selected: boolean;

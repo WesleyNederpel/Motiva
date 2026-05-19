@@ -10,10 +10,6 @@ const celebrateSound = require('@/assets/sounds/celebrate.wav');
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-/**
- * Mount once near the dashboard root. Listens for celebration triggers
- * and fires a confetti burst, "pling" sound, and haptic buzz.
- */
 export function CelebrationOverlay() {
   const trigger = useCelebrationTrigger();
   const [visible, setVisible] = useState(false);
@@ -22,8 +18,6 @@ export function CelebrationOverlay() {
   const player = useAudioPlayer(celebrateSound);
 
   useEffect(() => {
-    // Route playback through the media volume channel and bypass the
-    // iOS silent switch so the celebration is always audible.
     setAudioModeAsync({
       playsInSilentMode: true,
       interruptionMode: 'mixWithOthers',
@@ -35,7 +29,6 @@ export function CelebrationOverlay() {
     if (trigger === 0) return;
 
     setVisible(false);
-    // Force remount of the confetti cannon on each trigger.
     requestAnimationFrame(() => setVisible(true));
 
     if (Platform.OS !== 'web') {
@@ -48,7 +41,6 @@ export function CelebrationOverlay() {
       player?.seekTo(0);
       player?.play();
     } catch {
-      // ignore sound failures (missing/invalid asset, etc.)
     }
 
     if (timerRef.current) clearTimeout(timerRef.current);

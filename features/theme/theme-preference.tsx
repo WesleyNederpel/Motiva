@@ -15,7 +15,6 @@ const STORAGE_KEY = 'motiva.themePreference';
 interface ThemePreferenceContextValue {
   pref: ThemePreference;
   setPref: (pref: ThemePreference) => void;
-  /** True once we've finished reading the saved preference from AsyncStorage. */
   hydrated: boolean;
 }
 
@@ -69,10 +68,6 @@ export function useThemePreference() {
   return ctx;
 }
 
-/**
- * Returns the effective color scheme ('light' | 'dark') after applying the
- * user override on top of the system value.
- */
 export function useEffectiveColorScheme(): 'light' | 'dark' {
   const system = useRNColorScheme();
   const ctx = useContext(ThemePreferenceContext);

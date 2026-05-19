@@ -21,9 +21,7 @@ interface DateFieldProps {
   show: boolean;
   setShow: (show: boolean) => void;
   placeholder?: string;
-  /** Style for the touchable wrapper (typically styles.input or styles.subtaskInput). */
   style?: StyleProp<ViewStyle>;
-  /** Optional minimum date. Defaults to today (no past deadlines). */
   minimumDate?: Date;
 }
 
@@ -51,13 +49,6 @@ function formatDeadline(date: Date): string {
   });
 }
 
-/**
- * Tappable field that opens a native date picker.
- * - Calendar icon + friendly label (Today / Tomorrow / weekday + date)
- * - Clear button when a date is set
- * - Past dates disabled by default (minimumDate = today)
- * - iOS: modal with Cancel / Done so the spinner dismisses predictably
- */
 export function DateField({
   value,
   onChange,
@@ -70,7 +61,6 @@ export function DateField({
   const colors = useThemeColors();
   const minDate = minimumDate ?? startOfDay(new Date());
 
-  // iOS spinner needs a temp value while the user scrolls; commit on Done.
   const [tempDate, setTempDate] = useState<Date | null>(null);
 
   const openPicker = () => {

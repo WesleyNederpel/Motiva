@@ -15,7 +15,7 @@ interface TaskCardHeaderProps {
   onToggleExpansion: () => void;
 }
 
-export function TaskCardHeader({
+export const TaskCardHeader = React.memo(function TaskCardHeader({
   task,
   expanded,
   onToggle,
@@ -58,4 +58,4 @@ export function TaskCardHeader({
       </View>
     </View>
   );
-}
+});

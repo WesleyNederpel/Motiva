@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase';
 export interface ProfileStats {
   totalTasks: number;
   completedTasks: number;
-  rewardsEarned: number; // completed tasks that have a non-empty reward
+  rewardsEarned: number;
 }
 
 const EMPTY_STATS: ProfileStats = {
@@ -15,10 +15,6 @@ const EMPTY_STATS: ProfileStats = {
   rewardsEarned: 0,
 };
 
-/**
- * Fetches lightweight stats for the current user from the `tasks` table.
- * Refetches whenever the screen regains focus.
- */
 export function useProfileStats() {
   const [stats, setStats] = useState<ProfileStats>(EMPTY_STATS);
   const [loading, setLoading] = useState(true);

@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { TouchableOpacity, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { Task } from '@/features/tasks/types';
 import {
   AddSubtaskInput,
   UpdateSubtaskInput,
 } from '@/features/tasks/use-tasks';
+import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { AddSubtaskForm } from './add-subtask-form';
 import { SubtaskRow } from './subtask-row';
 
@@ -19,7 +19,7 @@ interface SubtaskListProps {
   onUpdateSubtask: (subtaskId: string, input: UpdateSubtaskInput) => Promise<boolean>;
 }
 
-export function SubtaskList({
+export const SubtaskList = React.memo(function SubtaskList({
   task,
   onAddSubtask,
   onToggleSubtask,
@@ -29,11 +29,11 @@ export function SubtaskList({
   const styles = useThemedStyles();
   const [showAdd, setShowAdd] = useState(false);
 
-  const handleAdd = async (input: AddSubtaskInput) => {
+  const handleAdd = useCallback(async (input: AddSubtaskInput) => {
     const ok = await onAddSubtask(input);
     if (ok) setShowAdd(false);
     return ok;
-  };
+  }, [onAddSubtask]);
 
   return (
     <View style={styles.subtasksSection}>
@@ -61,4 +61,4 @@ export function SubtaskList({
       )}
     </View>
   );
-}
+});

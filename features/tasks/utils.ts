@@ -1,6 +1,5 @@
 import { Subtask, Task } from './types';
 
-// Calculate task progress percentage based on subtasks (or completed flag).
 export function getTaskProgress(task: Task): number {
   if (task.subtasks && task.subtasks.length > 0) {
     const completed = task.subtasks.filter(st => st.completed).length;
@@ -9,7 +8,6 @@ export function getTaskProgress(task: Task): number {
   return task.completed ? 100 : 0;
 }
 
-// Format an ISO date string as DD/MM.
 export function formatDeadline(dateString: string): string {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -17,7 +15,6 @@ export function formatDeadline(dateString: string): string {
   return `${day}/${month}`;
 }
 
-// Comparator that sorts items by deadline ascending; null deadlines go last.
 export function sortByDeadline(
   a: { deadline?: string | null },
   b: { deadline?: string | null }
@@ -28,6 +25,5 @@ export function sortByDeadline(
   return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
 }
 
-// Convenience typed comparators (same logic, narrower types).
 export const sortTasksByDeadline = (a: Task, b: Task) => sortByDeadline(a, b);
 export const sortSubtasksByDeadline = (a: Subtask, b: Subtask) => sortByDeadline(a, b);

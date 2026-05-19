@@ -16,10 +16,9 @@ export default function Index() {
     }
   }, [user, loading]);
 
-  // Show loading screen while checking authentication
   if (loading) {
     return <LoadingScreen />;
   }
 
-  return null; // This component just handles redirection
+  return null;
 }

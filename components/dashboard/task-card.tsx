@@ -1,13 +1,13 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { ThemedView } from '@/components/themed-view';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { Task } from '@/features/tasks/types';
 import {
   AddSubtaskInput,
   UpdateSubtaskInput,
   UpdateTaskInput,
 } from '@/features/tasks/use-tasks';
+import { useThemedStyles } from '@/hooks/use-themed-styles';
 import { SubtaskList } from './subtask-list';
 import { TaskCardHeader } from './task-card-header';
 import { TaskEditForm } from './task-edit-form';
@@ -16,17 +16,17 @@ import { TaskProgress } from './task-progress';
 interface TaskCardProps {
   task: Task;
   expanded: boolean;
-  onToggleTask: () => void;
-  onDeleteTask: () => void;
-  onUpdateTask: (input: UpdateTaskInput) => Promise<boolean>;
-  onToggleExpansion: () => void;
-  onAddSubtask: (input: AddSubtaskInput) => Promise<boolean>;
-  onToggleSubtask: (subtaskId: string) => void;
-  onDeleteSubtask: (subtaskId: string) => void;
-  onUpdateSubtask: (subtaskId: string, input: UpdateSubtaskInput) => Promise<boolean>;
+  onToggleTask: (taskId: string) => void;
+  onDeleteTask: (taskId: string) => void;
+  onUpdateTask: (taskId: string, input: UpdateTaskInput) => Promise<boolean>;
+  onToggleExpansion: (taskId: string) => void;
+  onAddSubtask: (taskId: string, input: AddSubtaskInput) => Promise<boolean>;
+  onToggleSubtask: (subtaskId: string, taskId: string) => void;
+  onDeleteSubtask: (subtaskId: string, taskId: string) => void;
+  onUpdateSubtask: (subtaskId: string, taskId: string, input: UpdateSubtaskInput) => Promise<boolean>;
 }
 
-export function TaskCard({
+export const TaskCard = React.memo(function TaskCard({
   task,
   expanded,
   onToggleTask,
@@ -41,23 +41,49 @@ export function TaskCard({
   const styles = useThemedStyles();
   const [isEditing, setIsEditing] = useState(false);
 
+  const handleToggleTask = useCallback(() => onToggleTask(task.id), [onToggleTask, task.id]);
+  const handleDeleteTask = useCallback(() => onDeleteTask(task.id), [onDeleteTask, task.id]);
+  const handleToggleExpansion = useCallback(() => onToggleExpansion(task.id), [onToggleExpansion, task.id]);
+  const handleUpdateTask = useCallback(
+    (input: UpdateTaskInput) => onUpdateTask(task.id, input),
+    [onUpdateTask, task.id]
+  );
+  const handleAddSubtask = useCallback(
+    (input: AddSubtaskInput) => onAddSubtask(task.id, input),
+    [onAddSubtask, task.id]
+  );
+  const handleToggleSubtask = useCallback(
+    (subtaskId: string) => onToggleSubtask(subtaskId, task.id),
+    [onToggleSubtask, task.id]
+  );
+  const handleDeleteSubtask = useCallback(
+    (subtaskId: string) => onDeleteSubtask(subtaskId, task.id),
+    [onDeleteSubtask, task.id]
+  );
+  const handleUpdateSubtask = useCallback(
+    (subtaskId: string, input: UpdateSubtaskInput) => onUpdateSubtask(subtaskId, task.id, input),
+    [onUpdateSubtask, task.id]
+  );
+  const handleCancelEdit = useCallback(() => setIsEditing(false), []);
+  const handleStartEdit = useCallback(() => setIsEditing(true), []);
+
   return (
     <ThemedView style={styles.taskCard}>
       {isEditing ? (
         <TaskEditForm
           task={task}
-          onCancel={() => setIsEditing(false)}
-          onSave={onUpdateTask}
+          onCancel={handleCancelEdit}
+          onSave={handleUpdateTask}
         />
       ) : (
         <>
           <TaskCardHeader
             task={task}
             expanded={expanded}
-            onToggle={onToggleTask}
-            onDelete={onDeleteTask}
-            onEdit={() => setIsEditing(true)}
-            onToggleExpansion={onToggleExpansion}
+            onToggle={handleToggleTask}
+            onDelete={handleDeleteTask}
+            onEdit={handleStartEdit}
+            onToggleExpansion={handleToggleExpansion}
           />
 
           <TaskProgress task={task} />
@@ -65,14 +91,14 @@ export function TaskCard({
           {expanded && (
             <SubtaskList
               task={task}
-              onAddSubtask={onAddSubtask}
-              onToggleSubtask={onToggleSubtask}
-              onDeleteSubtask={onDeleteSubtask}
-              onUpdateSubtask={onUpdateSubtask}
+              onAddSubtask={handleAddSubtask}
+              onToggleSubtask={handleToggleSubtask}
+              onDeleteSubtask={handleDeleteSubtask}
+              onUpdateSubtask={handleUpdateSubtask}
             />
           )}
         </>
       )}
     </ThemedView>
   );
-}
+});

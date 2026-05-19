@@ -53,7 +53,6 @@ export default function RewardsScreen() {
     }, [])
   );
 
-  // Task with highest progress that is incomplete and has a reward set
   const nextRewardTask = tasks
     .filter(t => !t.completed && t.reward && t.reward.trim() !== '')
     .sort((a, b) => {

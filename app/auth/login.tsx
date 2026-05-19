@@ -10,7 +10,6 @@ export default function LoginScreen() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Theme-aware styles
   const styles = useThemedStyles();
   const colors = useThemeColors();
 

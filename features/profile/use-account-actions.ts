@@ -10,10 +10,6 @@ interface ChangePasswordInput {
   confirm: string;
 }
 
-/**
- * Wraps Supabase account mutations with consistent validation + alerts.
- * Each method returns a boolean indicating success so callers can collapse forms.
- */
 export function useAccountActions() {
   const router = useRouter();
 
@@ -64,7 +60,6 @@ export function useAccountActions() {
       return false;
     }
 
-    // Re-authenticate to verify the current password
     const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password: current,
@@ -94,9 +89,6 @@ export function useAccountActions() {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            // Requires a server-side Postgres function or edge function named
-            // `delete_user_account` that runs with elevated privileges and
-            // calls `auth.admin.deleteUser(auth.uid())`.
             const { error } = await supabase.rpc('delete_user_account');
             if (error) {
               console.error('delete_user_account RPC error:', error);

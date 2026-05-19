@@ -1,13 +1,11 @@
 import { StyleSheet, useColorScheme } from 'react-native';
 import { Colors } from './theme';
 
-// Theme-aware color getter (will be used in components)
 export function useThemeColors() {
   const colorScheme = useColorScheme() ?? 'light';
   return Colors[colorScheme];
 }
 
-// Common spacing values
 export const Spacing = {
   xs: 4,
   sm: 8,
@@ -18,7 +16,6 @@ export const Spacing = {
   xxxl: 32,
 };
 
-// Common border radius values
 export const BorderRadius = {
   sm: 4,
   md: 6,
@@ -26,7 +23,6 @@ export const BorderRadius = {
   xl: 12,
 };
 
-// Common font sizes
 export const FontSizes = {
   xs: 12,
   sm: 14,
@@ -36,7 +32,6 @@ export const FontSizes = {
   xxl: 32,
 };
 
-// Base styles - these will be used with theme colors in components
 export const BaseStyles = StyleSheet.create({
   container: {
     flex: 1,
@@ -139,7 +134,6 @@ export const BaseStyles = StyleSheet.create({
   },
 });
 
-// Auth specific styles
 export const AuthStyles = StyleSheet.create({
   keyboardContainer: {
     flex: 1,
@@ -163,7 +157,6 @@ export const AuthStyles = StyleSheet.create({
   },
 });
 
-// Dashboard specific styles
 export const DashboardStyles = StyleSheet.create({
   header: {
     flexDirection: 'row',
@@ -226,7 +219,6 @@ export const DashboardStyles = StyleSheet.create({
   emptyText: {
     fontSize: FontSizes.md,
   },
-  // Task card
   taskCard: {
     borderRadius: 16,
     marginBottom: Spacing.md,
@@ -273,7 +265,6 @@ export const DashboardStyles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-  // Progress bar
   progressTrackContainer: {
     height: 6,
     borderRadius: 3,
@@ -285,13 +276,11 @@ export const DashboardStyles = StyleSheet.create({
     backgroundColor: '#BF1A2F',
     borderRadius: 3,
   },
-  // Date label
   dateLabel: {
     fontSize: FontSizes.xs,
     textAlign: 'center',
     marginBottom: 2,
   },
-  // Subtasks section
   subtasksSection: {
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
@@ -328,7 +317,6 @@ export const DashboardStyles = StyleSheet.create({
   subtaskTitle: {
     fontSize: FontSizes.sm,
   },
-  // Add subtask
   addSubtaskContainer: {
     paddingTop: Spacing.sm,
     marginBottom: Spacing.sm,
@@ -354,14 +342,12 @@ export const DashboardStyles = StyleSheet.create({
     fontSize: FontSizes.sm,
     fontWeight: '500',
   },
-  // Edit form
   editFormButtons: {
     flexDirection: 'row',
     gap: Spacing.md,
     justifyContent: 'space-between',
     marginTop: Spacing.sm,
   },
-  // Legacy / shared
   taskRow: {
     flexDirection: 'row',
     alignItems: 'center',

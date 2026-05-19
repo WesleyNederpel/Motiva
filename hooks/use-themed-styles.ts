@@ -3,16 +3,12 @@ import { Colors } from '@/constants/theme';
 import { useMemo } from 'react';
 import { useColorScheme } from './use-color-scheme';
 
-/**
- * Hook that provides theme-aware styles by combining base styles with current theme colors
- */
 export function useThemedStyles() {
   const colorScheme = useColorScheme() ?? 'light';
   const theme = Colors[colorScheme];
 
   const themedStyles = useMemo(() => {
     return {
-      // Base styles with theme colors
       container: [
         BaseStyles.container,
         { backgroundColor: theme.background }
@@ -93,7 +89,6 @@ export function useThemedStyles() {
         { color: theme.error }
       ],
 
-      // Dashboard styles with theme colors
       header: DashboardStyles.header,
       headerTitle: [
         DashboardStyles.headerTitle,
@@ -131,7 +126,6 @@ export function useThemedStyles() {
         DashboardStyles.emptyText,
         { color: theme.muted }
       ],
-      // New card styles
       taskCard: [
         DashboardStyles.taskCard,
         {
@@ -204,14 +198,12 @@ export function useThemedStyles() {
         { color: theme.secondary }
       ],
       editFormButtons: DashboardStyles.editFormButtons,
-      // Auth-specific styles
       authContainer: [
         AuthStyles.authContainer,
         { backgroundColor: theme.background }
       ],
       authForm: AuthStyles.authForm,
 
-      // Settings-specific styles
       section: {
         backgroundColor: theme.surface,
         borderRadius: 12,
@@ -230,7 +222,6 @@ export function useThemedStyles() {
         flex: 1,
         color: theme.text,
       } as const,
-      // Legacy progress bar styles (kept for compat)
       progressContainer: {
         flexDirection: 'row' as const,
         alignItems: 'center' as const,
@@ -257,7 +248,6 @@ export function useThemedStyles() {
         minWidth: 35,
         textAlign: 'right' as const,
       } as const,
-      // Legacy keys kept for settings/other screens
       taskRow: [
         DashboardStyles.taskRow,
         { backgroundColor: theme.surface }
@@ -292,9 +282,6 @@ export function useThemedStyles() {
   return themedStyles;
 }
 
-/**
- * Hook to get individual theme colors
- */
 export function useThemeColors() {
   const colorScheme = useColorScheme() ?? 'light';
   return Colors[colorScheme];

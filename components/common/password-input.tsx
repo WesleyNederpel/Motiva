@@ -11,9 +11,6 @@ interface PasswordInputProps {
   autoFocus?: boolean;
 }
 
-/**
- * Password text input with an eye-toggle icon to reveal/hide the value.
- */
 export function PasswordInput({
   value,
   onChangeText,
@@ -44,7 +41,7 @@ export function PasswordInput({
           top: 0,
           bottom: 0,
           justifyContent: 'center',
-          paddingBottom: 16, // counteract input's marginBottom so the icon centers vertically
+          paddingBottom: 16,
         }}
         hitSlop={8}
       >

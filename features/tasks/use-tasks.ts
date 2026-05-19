@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert } from 'react-native';
 
 import { supabase } from '@/lib/supabase';
 import { triggerCelebration } from './celebration';
-import { Subtask, Task } from './types';
+import { Task } from './types';
 import { getTaskProgress, sortSubtasksByDeadline, sortTasksByDeadline } from './utils';
 
 export interface AddTaskInput {
@@ -27,36 +27,30 @@ export interface UpdateSubtaskInput {
   deadline: Date | null;
 }
 
-/**
- * Owns dashboard task data and Supabase mutations.
- *
- * Returns the task list, loading state, expansion state, and all mutation
- * helpers used by the dashboard screen.
- */
 export function useTasks() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
 
-  // Check user authentication
-  const checkUser = async () => {
+  const tasksRef = useRef<Task[]>([]);
+  useEffect(() => {
+    tasksRef.current = tasks;
+  }, [tasks]);
+
+  const checkUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    setUser(user);
     if (!user) {
       Alert.alert('Authentication Required', 'Please log in to access your tasks');
       setLoading(false);
-      return false;
+      return null;
     }
-    return true;
-  };
+    return user;
+  }, []);
 
-  // Fetch tasks from Supabase
-  const fetchTasks = async () => {
+  const fetchTasks = useCallback(async () => {
     try {
-      const isAuthenticated = await checkUser();
-      if (!isAuthenticated) return;
+      const user = await checkUser();
+      if (!user) return;
 
       const { data, error } = await supabase
         .from('tasks')
@@ -72,7 +66,6 @@ export function useTasks() {
         return;
       }
 
-      // Sort subtasks by deadline within each task
       const sortedData = (data || []).map(task => ({
         ...task,
         subtasks: task.subtasks?.sort(sortSubtasksByDeadline),
@@ -84,30 +77,22 @@ export function useTasks() {
       Alert.alert('Error', 'An unexpected error occurred');
     } finally {
       setLoading(false);
-      setRefreshing(false);
     }
-  };
+  }, [checkUser]);
 
   useEffect(() => {
     fetchTasks();
-  }, []);
+  }, [fetchTasks]);
 
-  const addTask = async ({ title, deadline, reward }: AddTaskInput) => {
+  const addTask = useCallback(async ({ title, deadline, reward }: AddTaskInput) => {
     if (title.trim() === '') {
       Alert.alert('Error', 'Please enter a task title');
       return false;
     }
 
     try {
-      const isAuthenticated = await checkUser();
-      if (!isAuthenticated) return false;
-
-      const { data: { user } } = await supabase.auth.getUser();
-
-      if (!user) {
-        Alert.alert('Error', 'User authentication failed');
-        return false;
-      }
+      const user = await checkUser();
+      if (!user) return false;
 
       const { data, error } = await supabase
         .from('tasks')
@@ -127,19 +112,21 @@ export function useTasks() {
         return false;
       }
 
-      const updatedTasks = [...tasks, data];
-      updatedTasks.sort(sortTasksByDeadline);
-      setTasks(updatedTasks);
+      setTasks(prev => {
+        const updated = [...prev, data];
+        updated.sort(sortTasksByDeadline);
+        return updated;
+      });
       return true;
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
       return false;
     }
-  };
+  }, [checkUser]);
 
-  const toggleTask = async (taskId: string) => {
-    const task = tasks.find(t => t.id === taskId);
+  const toggleTask = useCallback(async (taskId: string) => {
+    const task = tasksRef.current.find(t => t.id === taskId);
     if (!task) return;
 
     const newCompletedState = !task.completed;
@@ -170,7 +157,7 @@ export function useTasks() {
         }
       }
 
-      const nextTasks = tasks.map(t => {
+      const nextTasks = tasksRef.current.map(t => {
         if (t.id === taskId) {
           return {
             ...t,
@@ -190,9 +177,9 @@ export function useTasks() {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
     }
-  };
+  }, []);
 
-  const deleteTask = async (taskId: string) => {
+  const deleteTask = useCallback(async (taskId: string) => {
     Alert.alert(
       'Delete Task',
       'Are you sure you want to delete this task and all its subtasks?',
@@ -214,7 +201,7 @@ export function useTasks() {
                 return;
               }
 
-              setTasks(tasks.filter(task => task.id !== taskId));
+              setTasks(prev => prev.filter(task => task.id !== taskId));
             } catch (error) {
               console.error('Unexpected error:', error);
               Alert.alert('Error', 'An unexpected error occurred');
@@ -223,9 +210,9 @@ export function useTasks() {
         },
       ]
     );
-  };
+  }, []);
 
-  const updateTask = async (taskId: string, { title, deadline }: UpdateTaskInput) => {
+  const updateTask = useCallback(async (taskId: string, { title, deadline }: UpdateTaskInput) => {
     if (title.trim() === '') {
       Alert.alert('Error', 'Please enter a task title');
       return false;
@@ -245,7 +232,7 @@ export function useTasks() {
         return false;
       }
 
-      setTasks(tasks.map(t =>
+      setTasks(prev => prev.map(t =>
         t.id === taskId
           ? { ...t, title: title.trim(), deadline: deadline ? deadline.toISOString() : null }
           : t
@@ -256,19 +243,21 @@ export function useTasks() {
       Alert.alert('Error', 'An unexpected error occurred');
       return false;
     }
-  };
+  }, []);
 
-  const toggleTaskExpansion = (taskId: string) => {
-    const newExpanded = new Set(expandedTasks);
-    if (newExpanded.has(taskId)) {
-      newExpanded.delete(taskId);
-    } else {
-      newExpanded.add(taskId);
-    }
-    setExpandedTasks(newExpanded);
-  };
+  const toggleTaskExpansion = useCallback((taskId: string) => {
+    setExpandedTasks(prev => {
+      const next = new Set(prev);
+      if (next.has(taskId)) {
+        next.delete(taskId);
+      } else {
+        next.add(taskId);
+      }
+      return next;
+    });
+  }, []);
 
-  const addSubtask = async (taskId: string, { title, deadline }: AddSubtaskInput) => {
+  const addSubtask = useCallback(async (taskId: string, { title, deadline }: AddSubtaskInput) => {
     const trimmed = title.trim();
 
     if (trimmed === '') {
@@ -294,7 +283,7 @@ export function useTasks() {
         return false;
       }
 
-      setTasks(tasks.map(task => {
+      setTasks(prev => prev.map(task => {
         if (task.id === taskId) {
           const updatedSubtasks = [...(task.subtasks || []), data];
           updatedSubtasks.sort(sortSubtasksByDeadline);
@@ -308,10 +297,10 @@ export function useTasks() {
       Alert.alert('Error', 'An unexpected error occurred');
       return false;
     }
-  };
+  }, []);
 
-  const toggleSubtask = async (subtaskId: string, taskId: string) => {
-    const task = tasks.find(t => t.id === taskId);
+  const toggleSubtask = useCallback(async (subtaskId: string, taskId: string) => {
+    const task = tasksRef.current.find(t => t.id === taskId);
     const subtask = task?.subtasks?.find(s => s.id === subtaskId);
     if (!task || !subtask) return;
 
@@ -330,31 +319,24 @@ export function useTasks() {
         return;
       }
 
-      const updatedTasks = tasks.map(task => {
-        if (task.id === taskId) {
-          const updatedSubtasks = task.subtasks?.map(s =>
+      const updatedTasks = tasksRef.current.map(t => {
+        if (t.id === taskId) {
+          const updatedSubtasks = t.subtasks?.map(s =>
             s.id === subtaskId ? { ...s, completed: newSubtaskCompleted } : s
           );
-
-          const allSubtasksCompleted = updatedSubtasks && updatedSubtasks.length > 0 &&
-            updatedSubtasks.every(s => s.completed);
-
-          return {
-            ...task,
-            subtasks: updatedSubtasks,
-            completed: allSubtasksCompleted || false,
-          };
+          const allSubtasksCompleted = updatedSubtasks?.length
+            ? updatedSubtasks.every(s => s.completed)
+            : false;
+          return { ...t, subtasks: updatedSubtasks, completed: allSubtasksCompleted };
         }
-        return task;
+        return t;
       });
 
       const updatedTask = updatedTasks.find(t => t.id === taskId);
-      if (updatedTask && updatedTask.subtasks && updatedTask.subtasks.length > 0) {
-        const allSubtasksCompleted = updatedTask.subtasks.every((s: Subtask) => s.completed);
-
+      if (updatedTask?.subtasks?.length) {
         const { error: taskError } = await supabase
           .from('tasks')
-          .update({ completed: allSubtasksCompleted })
+          .update({ completed: updatedTask.completed })
           .eq('id', taskId);
 
         if (taskError) {
@@ -366,17 +348,16 @@ export function useTasks() {
 
       setTasks(updatedTasks);
 
-      const nextTask = updatedTasks.find(t => t.id === taskId);
-      if (nextTask && prevProgress < 100 && getTaskProgress(nextTask) === 100) {
+      if (updatedTask && prevProgress < 100 && getTaskProgress(updatedTask) === 100) {
         triggerCelebration();
       }
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
     }
-  };
+  }, []);
 
-  const deleteSubtask = async (subtaskId: string, taskId: string) => {
+  const deleteSubtask = useCallback(async (subtaskId: string, taskId: string) => {
     try {
       const { error } = await supabase
         .from('subtasks')
@@ -389,7 +370,7 @@ export function useTasks() {
         return;
       }
 
-      setTasks(tasks.map(task => {
+      setTasks(prev => prev.map(task => {
         if (task.id === taskId) {
           return {
             ...task,
@@ -402,9 +383,9 @@ export function useTasks() {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
     }
-  };
+  }, []);
 
-  const updateSubtask = async (
+  const updateSubtask = useCallback(async (
     subtaskId: string,
     taskId: string,
     { title, deadline }: UpdateSubtaskInput
@@ -428,7 +409,7 @@ export function useTasks() {
         return false;
       }
 
-      setTasks(tasks.map(t =>
+      setTasks(prev => prev.map(t =>
         t.id === taskId
           ? {
             ...t,
@@ -446,16 +427,12 @@ export function useTasks() {
       Alert.alert('Error', 'An unexpected error occurred');
       return false;
     }
-  };
+  }, []);
 
   return {
-    // state
     tasks,
     loading,
-    refreshing,
-    user,
     expandedTasks,
-    // actions
     fetchTasks,
     addTask,
     toggleTask,

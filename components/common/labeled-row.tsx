@@ -7,11 +7,8 @@ import { useThemeColors } from '@/hooks/use-themed-styles';
 interface LabeledRowProps {
   label: string;
   value?: string;
-  /** Trailing UI element (icon, chevron, button). */
   trailing?: ReactNode;
-  /** Makes the whole row tappable. */
   onPress?: () => void;
-  /** Removes the bottom border (useful for the last row in a card). */
   isLast?: boolean;
 }
 
