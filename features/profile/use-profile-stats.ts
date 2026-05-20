@@ -7,12 +7,14 @@ export interface ProfileStats {
   totalTasks: number;
   completedTasks: number;
   rewardsEarned: number;
+  points: number;
 }
 
 const EMPTY_STATS: ProfileStats = {
   totalTasks: 0,
   completedTasks: 0,
   rewardsEarned: 0,
+  points: 0,
 };
 
 export function useProfileStats() {
@@ -21,23 +23,27 @@ export function useProfileStats() {
 
   const fetchStats = useCallback(async () => {
     try {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('completed, reward');
+      const [tasksResult, userResult] = await Promise.all([
+        supabase.from('tasks').select('completed, reward'),
+        supabase.auth.getUser(),
+      ]);
 
-      if (error) {
-        console.error('Error fetching profile stats:', error);
+      if (tasksResult.error) {
+        console.error('Error fetching profile stats:', tasksResult.error);
         return;
       }
 
-      const rows = data ?? [];
+      const rows = tasksResult.data ?? [];
       const completed = rows.filter(t => t.completed);
+      const points = userResult.data.user?.user_metadata?.points ?? 0;
+
       setStats({
         totalTasks: rows.length,
         completedTasks: completed.length,
         rewardsEarned: completed.filter(
           t => typeof t.reward === 'string' && t.reward.trim() !== ''
         ).length,
+        points,
       });
     } catch (err) {
       console.error('Unexpected error fetching profile stats:', err);

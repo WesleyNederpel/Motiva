@@ -295,6 +295,19 @@ export function useThemedStyles() {
         fontSize: 12,
         fontWeight: '700' as const,
       } as const,
+      pointsPill: {
+        alignSelf: 'flex-start' as const,
+        backgroundColor: theme.progressTrack,
+        borderRadius: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+        marginTop: 4,
+      } as const,
+      pointsPillText: {
+        color: theme.text,
+        fontSize: 12,
+        fontWeight: '600' as const,
+      } as const,
     };
   }, [colorScheme, theme]);
 

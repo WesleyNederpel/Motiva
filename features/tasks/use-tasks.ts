@@ -37,6 +37,13 @@ export function useTasks() {
     tasksRef.current = tasks;
   }, [tasks]);
 
+  const awardPoints = useCallback(async (subtaskCount: number) => {
+    const earned = 10 + subtaskCount * 5;
+    const { data } = await supabase.auth.getUser();
+    const current = data.user?.user_metadata?.points ?? 0;
+    await supabase.auth.updateUser({ data: { points: current + earned } });
+  }, []);
+
   const checkUser = useCallback(async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -157,11 +164,23 @@ export function useTasks() {
         }
       }
 
+      let pointsJustAwarded = false;
+      if (newCompletedState && !task.points_awarded && prevProgress < 100) {
+        const { error: flagError } = await supabase
+          .from('tasks')
+          .update({ points_awarded: true })
+          .eq('id', taskId);
+        if (!flagError) {
+          pointsJustAwarded = true;
+        }
+      }
+
       const nextTasks = tasksRef.current.map(t => {
         if (t.id === taskId) {
           return {
             ...t,
             completed: newCompletedState,
+            points_awarded: pointsJustAwarded ? true : t.points_awarded,
             subtasks: t.subtasks?.map(s => ({ ...s, completed: newCompletedState })),
           };
         }
@@ -172,12 +191,15 @@ export function useTasks() {
       const nextTask = nextTasks.find(t => t.id === taskId);
       if (nextTask && prevProgress < 100 && getTaskProgress(nextTask) === 100) {
         triggerCelebration();
+        if (pointsJustAwarded) {
+          await awardPoints(task.subtasks?.length ?? 0);
+        }
       }
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
     }
-  }, []);
+  }, [awardPoints]);
 
   const deleteTask = useCallback(async (taskId: string) => {
     Alert.alert(
@@ -333,10 +355,17 @@ export function useTasks() {
       });
 
       const updatedTask = updatedTasks.find(t => t.id === taskId);
+      const willComplete = updatedTask ? getTaskProgress(updatedTask) === 100 : false;
+
+      let pointsJustAwarded = false;
       if (updatedTask?.subtasks?.length) {
+        const updates: Record<string, unknown> = { completed: updatedTask.completed };
+        if (willComplete && prevProgress < 100 && !task.points_awarded) {
+          updates.points_awarded = true;
+        }
         const { error: taskError } = await supabase
           .from('tasks')
-          .update({ completed: updatedTask.completed })
+          .update(updates)
           .eq('id', taskId);
 
         if (taskError) {
@@ -344,18 +373,27 @@ export function useTasks() {
           Alert.alert('Error', 'Failed to update task');
           return;
         }
+        if (updates.points_awarded) {
+          pointsJustAwarded = true;
+        }
       }
 
-      setTasks(updatedTasks);
+      const finalTasks = pointsJustAwarded
+        ? updatedTasks.map(t => t.id === taskId ? { ...t, points_awarded: true } : t)
+        : updatedTasks;
+      setTasks(finalTasks);
 
-      if (updatedTask && prevProgress < 100 && getTaskProgress(updatedTask) === 100) {
+      if (updatedTask && prevProgress < 100 && willComplete) {
         triggerCelebration();
+        if (pointsJustAwarded) {
+          await awardPoints(updatedTask.subtasks?.length ?? 0);
+        }
       }
     } catch (error) {
       console.error('Unexpected error:', error);
       Alert.alert('Error', 'An unexpected error occurred');
     }
-  }, []);
+  }, [awardPoints]);
 
   const deleteSubtask = useCallback(async (subtaskId: string, taskId: string) => {
     try {

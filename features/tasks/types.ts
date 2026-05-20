@@ -16,5 +16,6 @@ export interface Task {
   updated_at: string;
   deadline?: string | null;
   reward?: string | null;
+  points_awarded?: boolean;
   subtasks?: Subtask[];
 }

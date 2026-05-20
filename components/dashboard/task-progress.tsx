@@ -13,6 +13,7 @@ interface TaskProgressProps {
 export const TaskProgress = React.memo(function TaskProgress({ task }: TaskProgressProps) {
   const styles = useThemedStyles();
   const progress = getTaskProgress(task);
+  const pointsValue = 10 + (task.subtasks?.length ?? 0) * 5;
 
   return (
     <>
@@ -38,6 +39,12 @@ export const TaskProgress = React.memo(function TaskProgress({ task }: TaskProgr
           <Text style={styles.rewardPillText}>🎁 {task.reward}</Text>
         </View>
       ) : null}
+
+      {!task.completed && (
+        <View style={styles.pointsPill}>
+          <Text style={styles.pointsPillText}>⭐ {pointsValue} pts</Text>
+        </View>
+      )}
     </>
   );
 });

@@ -7,10 +7,11 @@ import { useThemeColors } from '@/hooks/use-themed-styles';
 interface AvatarHeroProps {
   avatar: string | null;
   email: string | null;
+  points?: number;
   onPress: () => void;
 }
 
-export function AvatarHero({ avatar, email, onPress }: AvatarHeroProps) {
+export function AvatarHero({ avatar, email, points, onPress }: AvatarHeroProps) {
   const colors = useThemeColors();
 
   const display = avatar ?? (email ? email[0].toUpperCase() : '?');
@@ -35,6 +36,11 @@ export function AvatarHero({ avatar, email, onPress }: AvatarHeroProps) {
       <Text style={[styles.editLabel, { color: colors.muted }]}>
         Tap to change avatar
       </Text>
+      {points !== undefined && (
+        <View style={[styles.pointsBadge, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+          <Text style={[styles.pointsText, { color: colors.text }]}>⭐ {points} pts</Text>
+        </View>
+      )}
     </View>
   );
 }
@@ -63,5 +69,16 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 8,
     fontWeight: '500',
+  },
+  pointsBadge: {
+    marginTop: 10,
+    borderRadius: 20,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    paddingVertical: 5,
+  },
+  pointsText: {
+    fontSize: 14,
+    fontWeight: '700',
   },
 });

@@ -8,6 +8,7 @@ import { useThemeColors } from '@/hooks/use-themed-styles';
 
 interface StatsCardProps {
   memberSince: string | null;
+  points?: number;
 }
 
 function formatMemberSince(iso: string | null): string {
@@ -36,16 +37,22 @@ function StatTile({ label, value }: StatTileProps) {
   );
 }
 
-export function StatsCard({ memberSince }: StatsCardProps) {
+export function StatsCard({ memberSince, points: pointsProp }: StatsCardProps) {
   const { stats, loading } = useProfileStats();
   const v = loading ? '…' : undefined;
+  const pointsValue = pointsProp !== undefined ? pointsProp : stats.points;
 
   return (
     <SectionCard title="Stats">
-      <View style={styles.tilesRow}>
-        <StatTile label="Total" value={v ?? String(stats.totalTasks)} />
-        <StatTile label="Completed" value={v ?? String(stats.completedTasks)} />
-        <StatTile label="Rewards" value={v ?? String(stats.rewardsEarned)} />
+      <View style={styles.grid}>
+        <View style={styles.tilesRow}>
+          <StatTile label="Total" value={v ?? String(stats.totalTasks)} />
+          <StatTile label="Done" value={v ?? String(stats.completedTasks)} />
+        </View>
+        <View style={styles.tilesRow}>
+          <StatTile label="Rewards" value={v ?? String(stats.rewardsEarned)} />
+          <StatTile label="Points" value={loading ? '…' : `⭐ ${pointsValue}`} />
+        </View>
       </View>
       <LabeledRow
         label="Member since"
@@ -57,11 +64,14 @@ export function StatsCard({ memberSince }: StatsCardProps) {
 }
 
 const styles = StyleSheet.create({
+  grid: {
+    padding: 16,
+    paddingBottom: 8,
+    gap: 8,
+  },
   tilesRow: {
     flexDirection: 'row',
     gap: 8,
-    padding: 16,
-    paddingBottom: 8,
   },
   tile: {
     flex: 1,
@@ -71,9 +81,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   tileValue: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: '800',
-    lineHeight: 34,
+    lineHeight: 28,
   },
   tileLabel: {
     fontSize: 11,
