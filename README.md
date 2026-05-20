@@ -27,7 +27,8 @@ A React Native task-management app built with Expo and Supabase. Create tasks wi
 - **Progress tracking** — red progress bar per task based on subtask completion
 - **Rewards** — attach a reward string to a task; view next upcoming reward and earned rewards
 - **Celebration** — confetti burst, haptic feedback, and sound when a task reaches 100%
-- **Profile** — view account stats (total tasks, completed tasks, rewards earned), change email or password, delete account
+- **Profile** — view account stats (total tasks, completed tasks, rewards earned, points), change avatar, change email or password, delete account
+- **Avatar & Points** — earn points by completing tasks; spend points to unlock avatar tiers (Free, Common 25 pts, Rare 75 pts, Legendary 150 pts)
 - **Settings** — choose light, dark, or system appearance; preference persisted to device storage
 - **Full dark mode** — every screen respects the active color scheme
 
@@ -80,11 +81,12 @@ create table public.tasks (
   id          uuid primary key default gen_random_uuid(),
   user_id     uuid not null references auth.users(id) on delete cascade,
   title       text not null,
-  completed   boolean not null default false,
-  deadline    timestamptz,
-  reward      text,
-  created_at  timestamptz not null default now(),
-  updated_at  timestamptz not null default now()
+  completed       boolean not null default false,
+  deadline        timestamptz,
+  reward          text,
+  points_awarded  boolean not null default false,
+  created_at      timestamptz not null default now(),
+  updated_at      timestamptz not null default now()
 );
 
 create table public.subtasks (
@@ -229,10 +231,21 @@ motiva/
 │   │   ├── task-card.tsx
 │   │   ├── task-card-header.tsx
 │   │   ├── task-edit-form.tsx
-│   │   └── task-progress.tsx
+│   │   ├── task-progress.tsx
+│   │   └── task-section.tsx       # Collapsible section grouping tasks with a count badge
 │   ├── profile/                # Profile-specific components
+│   │   ├── account-info-card.tsx  # Email/password change forms
+│   │   ├── avatar-hero.tsx        # Large avatar display with edit button
+│   │   ├── avatar-picker.tsx      # Bottom-sheet modal for selecting/buying avatars
+│   │   ├── danger-zone.tsx        # Delete account section
+│   │   ├── email-edit-form.tsx    # Inline email change form
+│   │   ├── password-change-form.tsx  # Inline password change form
+│   │   ├── profile-header.tsx     # Screen title header
+│   │   └── stats-card.tsx         # Stats grid (tasks, completions, rewards, points)
 │   ├── rewards/                # Rewards-specific components
 │   ├── settings/               # Theme picker component
+│   ├── themed-text.tsx         # Text component wired to active theme colors
+│   ├── themed-view.tsx         # View component wired to active theme colors
 │   └── ui/                     # Low-level primitives (IconSymbol, Collapsible)
 │
 ├── constants/
