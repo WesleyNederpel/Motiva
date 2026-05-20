@@ -1,8 +1,10 @@
 import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { LabeledRow } from '@/components/common/labeled-row';
 import { SectionCard } from '@/components/common/section-card';
 import { useProfileStats } from '@/features/profile/use-profile-stats';
+import { useThemeColors } from '@/hooks/use-themed-styles';
 
 interface StatsCardProps {
   memberSince: string | null;
@@ -19,25 +21,65 @@ function formatMemberSince(iso: string | null): string {
   });
 }
 
+interface StatTileProps {
+  label: string;
+  value: string;
+}
+
+function StatTile({ label, value }: StatTileProps) {
+  const colors = useThemeColors();
+  return (
+    <View style={[styles.tile, { backgroundColor: colors.background, borderColor: colors.border }]}>
+      <Text style={[styles.tileValue, { color: colors.text }]}>{value}</Text>
+      <Text style={[styles.tileLabel, { color: colors.muted }]}>{label}</Text>
+    </View>
+  );
+}
+
 export function StatsCard({ memberSince }: StatsCardProps) {
   const { stats, loading } = useProfileStats();
+  const v = loading ? '…' : undefined;
 
   return (
     <SectionCard title="Stats">
-      <LabeledRow label="Member since" value={formatMemberSince(memberSince)} />
+      <View style={styles.tilesRow}>
+        <StatTile label="Total" value={v ?? String(stats.totalTasks)} />
+        <StatTile label="Completed" value={v ?? String(stats.completedTasks)} />
+        <StatTile label="Rewards" value={v ?? String(stats.rewardsEarned)} />
+      </View>
       <LabeledRow
-        label="Total tasks"
-        value={loading ? '…' : String(stats.totalTasks)}
-      />
-      <LabeledRow
-        label="Completed tasks"
-        value={loading ? '…' : String(stats.completedTasks)}
-      />
-      <LabeledRow
-        label="Rewards earned"
-        value={loading ? '…' : String(stats.rewardsEarned)}
+        label="Member since"
+        value={formatMemberSince(memberSince)}
         isLast
       />
     </SectionCard>
   );
 }
+
+const styles = StyleSheet.create({
+  tilesRow: {
+    flexDirection: 'row',
+    gap: 8,
+    padding: 16,
+    paddingBottom: 8,
+  },
+  tile: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  tileValue: {
+    fontSize: 28,
+    fontWeight: '800',
+    lineHeight: 34,
+  },
+  tileLabel: {
+    fontSize: 11,
+    fontWeight: '600',
+    marginTop: 2,
+    textTransform: 'uppercase',
+    letterSpacing: 0.4,
+  },
+});

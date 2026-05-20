@@ -1,4 +1,5 @@
 import React, { useCallback, useState } from 'react';
+import { View } from 'react-native';
 
 import { ThemedView } from '@/components/themed-view';
 import { Task } from '@/features/tasks/types';
@@ -7,7 +8,8 @@ import {
   UpdateSubtaskInput,
   UpdateTaskInput,
 } from '@/features/tasks/use-tasks';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
+import { getTaskProgress } from '@/features/tasks/utils';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { SubtaskList } from './subtask-list';
 import { TaskCardHeader } from './task-card-header';
 import { TaskEditForm } from './task-edit-form';
@@ -39,7 +41,15 @@ export const TaskCard = React.memo(function TaskCard({
   onUpdateSubtask,
 }: TaskCardProps) {
   const styles = useThemedStyles();
+  const colors = useThemeColors();
   const [isEditing, setIsEditing] = useState(false);
+
+  const progress = getTaskProgress(task);
+  const accentColor = task.completed
+    ? colors.secondary
+    : progress > 0
+      ? colors.primary
+      : colors.muted;
 
   const handleToggleTask = useCallback(() => onToggleTask(task.id), [onToggleTask, task.id]);
   const handleDeleteTask = useCallback(() => onDeleteTask(task.id), [onDeleteTask, task.id]);
@@ -68,37 +78,51 @@ export const TaskCard = React.memo(function TaskCard({
   const handleStartEdit = useCallback(() => setIsEditing(true), []);
 
   return (
-    <ThemedView style={styles.taskCard}>
-      {isEditing ? (
-        <TaskEditForm
-          task={task}
-          onCancel={handleCancelEdit}
-          onSave={handleUpdateTask}
+    <View style={{ opacity: task.completed ? 0.6 : 1 }}>
+      <ThemedView style={[styles.taskCard, { overflow: 'hidden' }]}>
+        <View
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: 4,
+            backgroundColor: accentColor,
+            borderTopLeftRadius: 16,
+            borderBottomLeftRadius: 16,
+          }}
         />
-      ) : (
-        <>
-          <TaskCardHeader
+        {isEditing ? (
+          <TaskEditForm
             task={task}
-            expanded={expanded}
-            onToggle={handleToggleTask}
-            onDelete={handleDeleteTask}
-            onEdit={handleStartEdit}
-            onToggleExpansion={handleToggleExpansion}
+            onCancel={handleCancelEdit}
+            onSave={handleUpdateTask}
           />
-
-          <TaskProgress task={task} />
-
-          {expanded && (
-            <SubtaskList
+        ) : (
+          <>
+            <TaskCardHeader
               task={task}
-              onAddSubtask={handleAddSubtask}
-              onToggleSubtask={handleToggleSubtask}
-              onDeleteSubtask={handleDeleteSubtask}
-              onUpdateSubtask={handleUpdateSubtask}
+              expanded={expanded}
+              onToggle={handleToggleTask}
+              onDelete={handleDeleteTask}
+              onEdit={handleStartEdit}
+              onToggleExpansion={handleToggleExpansion}
             />
-          )}
-        </>
-      )}
-    </ThemedView>
+
+            <TaskProgress task={task} />
+
+            {expanded && (
+              <SubtaskList
+                task={task}
+                onAddSubtask={handleAddSubtask}
+                onToggleSubtask={handleToggleSubtask}
+                onDeleteSubtask={handleDeleteSubtask}
+                onUpdateSubtask={handleUpdateSubtask}
+              />
+            )}
+          </>
+        )}
+      </ThemedView>
+    </View>
   );
 });

@@ -10,13 +10,14 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Task } from '@/features/tasks/types';
 import { getTaskProgress, sortByDeadline } from '@/features/tasks/utils';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { supabase } from '@/lib/supabase';
 
 export default function RewardsScreen() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const styles = useThemedStyles();
+  const theme = useThemeColors();
 
   const fetchTasks = async () => {
     try {
@@ -74,13 +75,13 @@ export default function RewardsScreen() {
           </ThemedView>
         ) : (
           <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-            <ThemedText style={[styles.taskTitle, { fontWeight: '700', fontSize: 16, marginBottom: 10 }]}>
-              Next Reward
+            <ThemedText style={{ fontSize: 18, fontWeight: '800', marginBottom: 10, letterSpacing: 0.3, color: theme.rewardColor }}>
+              🎯 Next Reward
             </ThemedText>
             <NextRewardCard task={nextRewardTask} />
 
-            <ThemedText style={[styles.taskTitle, { fontWeight: '700', fontSize: 16, marginBottom: 10 }]}>
-              Earned Rewards
+            <ThemedText style={{ fontSize: 18, fontWeight: '800', marginBottom: 10, letterSpacing: 0.3, color: theme.rewardColor }}>
+              🏆 Earned Rewards
             </ThemedText>
 
             {earnedTasks.length === 0 ? (
@@ -98,3 +99,4 @@ export default function RewardsScreen() {
     </SafeAreaView>
   );
 }
+

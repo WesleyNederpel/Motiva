@@ -3,6 +3,8 @@ import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AccountInfoCard } from '@/components/profile/account-info-card';
+import { AvatarHero } from '@/components/profile/avatar-hero';
+import { AvatarPicker } from '@/components/profile/avatar-picker';
 import { DangerZone } from '@/components/profile/danger-zone';
 import { ProfileHeader } from '@/components/profile/profile-header';
 import { StatsCard } from '@/components/profile/stats-card';
@@ -15,6 +17,8 @@ export default function ProfileScreen() {
   const styles = useThemedStyles();
   const [email, setEmail] = useState<string | null>(null);
   const [memberSince, setMemberSince] = useState<string | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
+  const [pickerVisible, setPickerVisible] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -24,6 +28,7 @@ export default function ProfileScreen() {
       if (!mounted) return;
       setEmail(data.user?.email ?? null);
       setMemberSince(data.user?.created_at ?? null);
+      setAvatar(data.user?.user_metadata?.avatar ?? null);
       setLoading(false);
     };
     loadUser();
@@ -32,6 +37,7 @@ export default function ProfileScreen() {
       if (!mounted) return;
       setEmail(session?.user?.email ?? null);
       setMemberSince(session?.user?.created_at ?? null);
+      setAvatar(session?.user?.user_metadata?.avatar ?? null);
     });
 
     return () => {
@@ -39,6 +45,12 @@ export default function ProfileScreen() {
       sub.subscription.unsubscribe();
     };
   }, []);
+
+  const handleSelectAvatar = async (selected: string) => {
+    setPickerVisible(false);
+    setAvatar(selected);
+    await supabase.auth.updateUser({ data: { avatar: selected } });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -51,13 +63,25 @@ export default function ProfileScreen() {
             </ThemedView>
           ) : (
             <>
-              <AccountInfoCard email={email} />
+              <AvatarHero
+                avatar={avatar}
+                email={email}
+                onPress={() => setPickerVisible(true)}
+              />
               <StatsCard memberSince={memberSince} />
+              <AccountInfoCard email={email} />
               <DangerZone />
             </>
           )}
         </ScrollView>
       </ThemedView>
+
+      <AvatarPicker
+        visible={pickerVisible}
+        current={avatar}
+        onSelect={handleSelectAvatar}
+        onClose={() => setPickerVisible(false)}
+      />
     </SafeAreaView>
   );
 }

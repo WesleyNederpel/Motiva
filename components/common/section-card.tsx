@@ -35,9 +35,14 @@ export function SectionCard({ title, children, style }: SectionCardProps) {
         style={[
           {
             backgroundColor: colors.surface,
-            borderRadius: 12,
+            borderRadius: 16,
             marginBottom: 20,
             overflow: 'hidden',
+            shadowColor: colors.shadow,
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.08,
+            shadowRadius: 8,
+            elevation: 3,
           },
           style,
         ]}

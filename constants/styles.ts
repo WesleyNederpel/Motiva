@@ -266,8 +266,8 @@ export const DashboardStyles = StyleSheet.create({
     fontWeight: '600',
   },
   progressTrackContainer: {
-    height: 6,
-    borderRadius: 3,
+    height: 10,
+    borderRadius: 5,
     overflow: 'hidden',
     marginBottom: 8,
   },

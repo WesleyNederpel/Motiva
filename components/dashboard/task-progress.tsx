@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Task } from '@/features/tasks/types';
@@ -16,10 +16,15 @@ export const TaskProgress = React.memo(function TaskProgress({ task }: TaskProgr
 
   return (
     <>
-      <View style={styles.progressTrackContainer}>
-        <View
-          style={[styles.progressFillBar, { width: `${progress}%` as any }]}
-        />
+      <View style={styles.progressRow}>
+        <View style={[styles.progressTrackContainer, { flex: 1, marginBottom: 0 }]}>
+          <View
+            style={[styles.progressFillBar, { width: `${progress}%` as any }]}
+          />
+        </View>
+        <ThemedText style={[styles.dateLabel, { fontWeight: '600', minWidth: 32, textAlign: 'right', marginBottom: 0 }]}>
+          {progress}%
+        </ThemedText>
       </View>
 
       {task.deadline ? (
@@ -29,7 +34,9 @@ export const TaskProgress = React.memo(function TaskProgress({ task }: TaskProgr
       ) : null}
 
       {task.reward ? (
-        <ThemedText style={styles.rewardText}>{task.reward}</ThemedText>
+        <View style={styles.rewardPill}>
+          <Text style={styles.rewardPillText}>🎁 {task.reward}</Text>
+        </View>
       ) : null}
     </>
   );

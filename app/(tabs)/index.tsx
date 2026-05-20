@@ -1,19 +1,19 @@
-import React, { useCallback, useState } from 'react';
-import { FlatList } from 'react-native';
+import React, { useCallback, useMemo, useState } from 'react';
+import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { AddTaskForm } from '@/components/dashboard/add-task-form';
 import { CelebrationOverlay } from '@/components/dashboard/celebration-overlay';
 import { DashboardHeader } from '@/components/dashboard/dashboard-header';
-import { TaskCard } from '@/components/dashboard/task-card';
+import { TaskSection } from '@/components/dashboard/task-section';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Task } from '@/features/tasks/types';
 import { AddTaskInput, useTasks } from '@/features/tasks/use-tasks';
-import { useThemedStyles } from '@/hooks/use-themed-styles';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 
 export default function DashboardScreen() {
   const styles = useThemedStyles();
+  const colors = useThemeColors();
   const {
     tasks,
     loading,
@@ -37,26 +37,19 @@ export default function DashboardScreen() {
     return ok;
   }, [addTask]);
 
-  const renderItem = useCallback(({ item: task }: { item: Task }) => (
-    <TaskCard
-      task={task}
-      expanded={expandedTasks.has(task.id)}
-      onToggleTask={toggleTask}
-      onDeleteTask={deleteTask}
-      onUpdateTask={updateTask}
-      onToggleExpansion={toggleTaskExpansion}
-      onAddSubtask={addSubtask}
-      onToggleSubtask={toggleSubtask}
-      onDeleteSubtask={deleteSubtask}
-      onUpdateSubtask={updateSubtask}
-    />
-  ), [
-    expandedTasks,
-    toggleTask, deleteTask, updateTask, toggleTaskExpansion,
-    addSubtask, toggleSubtask, deleteSubtask, updateSubtask,
-  ]);
+  const openTasks = useMemo(() => tasks.filter(t => !t.completed), [tasks]);
+  const completedTasks = useMemo(() => tasks.filter(t => t.completed), [tasks]);
 
-  const keyExtractor = useCallback((task: Task) => task.id, []);
+  const sharedCallbacks = {
+    onToggleTask: toggleTask,
+    onDeleteTask: deleteTask,
+    onUpdateTask: updateTask,
+    onToggleExpansion: toggleTaskExpansion,
+    onAddSubtask: addSubtask,
+    onToggleSubtask: toggleSubtask,
+    onDeleteSubtask: deleteSubtask,
+    onUpdateSubtask: updateSubtask,
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -75,20 +68,37 @@ export default function DashboardScreen() {
             <ThemedText style={styles.emptyText}>Loading tasks...</ThemedText>
           </ThemedView>
         ) : (
-          <FlatList
-            data={tasks}
-            keyExtractor={keyExtractor}
-            renderItem={renderItem}
-            style={styles.taskList}
-            showsVerticalScrollIndicator={false}
-            ListEmptyComponent={
+          <ScrollView style={styles.taskList} showsVerticalScrollIndicator={false}>
+            {tasks.length === 0 ? (
               <ThemedView style={styles.emptyState}>
                 <ThemedText style={styles.emptyText}>
                   No tasks yet. Add your first task!
                 </ThemedText>
               </ThemedView>
-            }
-          />
+            ) : (
+              <>
+                <TaskSection
+                  title="Open"
+                  tasks={openTasks}
+                  defaultExpanded={true}
+                  expandedTasks={expandedTasks}
+                  emptyMessage="No open tasks 🎉"
+                  {...sharedCallbacks}
+                />
+
+                <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 8 }} />
+
+                <TaskSection
+                  title="Completed"
+                  tasks={completedTasks}
+                  defaultExpanded={false}
+                  expandedTasks={expandedTasks}
+                  emptyMessage="Nothing completed yet."
+                  {...sharedCallbacks}
+                />
+              </>
+            )}
+          </ScrollView>
         )}
       </ThemedView>
       <CelebrationOverlay />

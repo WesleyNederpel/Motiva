@@ -276,6 +276,25 @@ export function useThemedStyles() {
         DashboardStyles.subtaskItem,
         { backgroundColor: theme.surface }
       ],
+      progressRow: {
+        flexDirection: 'row' as const,
+        alignItems: 'center' as const,
+        gap: 8,
+        marginBottom: 8,
+      } as const,
+      rewardPill: {
+        alignSelf: 'flex-start' as const,
+        backgroundColor: theme.rewardColor,
+        borderRadius: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+        marginTop: 4,
+      } as const,
+      rewardPillText: {
+        color: '#FFFFFF',
+        fontSize: 12,
+        fontWeight: '700' as const,
+      } as const,
     };
   }, [colorScheme, theme]);
 
