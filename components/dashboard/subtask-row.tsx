@@ -5,7 +5,7 @@ import { ThemedText } from '@/components/themed-text';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Subtask } from '@/features/tasks/types';
 import { UpdateSubtaskInput } from '@/features/tasks/use-tasks';
-import { formatDeadline } from '@/features/tasks/utils';
+import { formatDeadline, isOverdue } from '@/features/tasks/utils';
 import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { SubtaskEditForm } from './subtask-edit-form';
 
@@ -33,6 +33,8 @@ export const SubtaskRow = React.memo(function SubtaskRow({ subtask, onToggle, on
     );
   }
 
+  const overdue = isOverdue(subtask.deadline, subtask.completed);
+
   return (
     <View style={styles.subtaskItemRow}>
       <TouchableOpacity style={styles.subtaskContent} onPress={onToggle}>
@@ -56,10 +58,21 @@ export const SubtaskRow = React.memo(function SubtaskRow({ subtask, onToggle, on
             {subtask.title}
           </ThemedText>
           {subtask.deadline ? (
-            <ThemedText style={[styles.dateLabel, { flex: 1, textAlign: 'center' }]}>
+            <ThemedText
+              style={[
+                styles.dateLabel,
+                { flex: 1, textAlign: 'center' },
+                overdue && styles.overdueText,
+              ]}
+            >
               {formatDeadline(subtask.deadline)}
             </ThemedText>
           ) : null}
+          {overdue && (
+            <View style={[styles.overduePill, { marginTop: 0, marginLeft: 6 }]}>
+              <Text style={styles.overduePillText}>Overdue</Text>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
       <TouchableOpacity style={styles.iconButton} onPress={() => setIsEditing(true)}>

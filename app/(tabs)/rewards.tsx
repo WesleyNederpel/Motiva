@@ -9,7 +9,7 @@ import { NextRewardCard } from '@/components/rewards/next-reward-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Task } from '@/features/tasks/types';
-import { getTaskProgress, sortByDeadline } from '@/features/tasks/utils';
+import { getTaskProgress, isOverdue, sortByDeadline } from '@/features/tasks/utils';
 import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { supabase } from '@/lib/supabase';
 
@@ -55,14 +55,30 @@ export default function RewardsScreen() {
   );
 
   const nextRewardTask = tasks
-    .filter(t => !t.completed && t.reward && t.reward.trim() !== '')
+    .filter(t => !t.completed && t.reward && t.reward.trim() !== '' && !isOverdue(t.deadline, false))
     .sort((a, b) => {
       const diff = getTaskProgress(b) - getTaskProgress(a);
       if (diff !== 0) return diff;
       return sortByDeadline(a, b);
     })[0] ?? null;
 
-  const earnedTasks = tasks.filter(t => t.completed);
+  const startOfDay = (d: Date) => {
+    const x = new Date(d);
+    x.setHours(0, 0, 0, 0);
+    return x;
+  };
+  const earnedTasks = tasks.filter(t => {
+    if (!t.completed) return false;
+    if (!t.deadline) return true;
+    const due = new Date(t.deadline);
+    if (isNaN(due.getTime())) return true;
+    if (t.completed_at) {
+      // Earned if the task was completed on or before its deadline day.
+      return startOfDay(new Date(t.completed_at)).getTime() <= startOfDay(due).getTime();
+    }
+    // Legacy tasks without completed_at: keep visible unless deadline has already passed.
+    return !isOverdue(t.deadline, false);
+  });
 
   return (
     <SafeAreaView style={styles.container}>

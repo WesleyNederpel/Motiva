@@ -23,6 +23,8 @@ export const Colors = {
     progressTrack: '#D4D6D4',
     addButtonBg: '#23344A',
     rewardColor: '#C47A1E',
+    statusInProgress: '#E08A1E',
+    statusDone: '#2E7D5B',
   },
   dark: {
     text: '#E6E8E6',
@@ -46,6 +48,8 @@ export const Colors = {
     progressTrack: '#2E4560',
     addButtonBg: '#36749E',
     rewardColor: '#E8A030',
+    statusInProgress: '#E8A030',
+    statusDone: '#3FA47A',
   },
 };
 

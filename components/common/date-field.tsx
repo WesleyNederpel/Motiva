@@ -23,6 +23,7 @@ interface DateFieldProps {
   placeholder?: string;
   style?: StyleProp<ViewStyle>;
   minimumDate?: Date;
+  allowPast?: boolean;
 }
 
 function startOfDay(d: Date): Date {
@@ -57,14 +58,15 @@ export function DateField({
   placeholder = 'Deadline (optional)...',
   style,
   minimumDate,
+  allowPast,
 }: DateFieldProps) {
   const colors = useThemeColors();
-  const minDate = minimumDate ?? startOfDay(new Date());
+  const computedMinDate = allowPast ? undefined : (minimumDate ?? startOfDay(new Date()));
 
   const [tempDate, setTempDate] = useState<Date | null>(null);
 
   const openPicker = () => {
-    setTempDate(value ?? minDate);
+    setTempDate(value ?? (computedMinDate ?? startOfDay(new Date())));
     setShow(true);
   };
 
@@ -112,7 +114,7 @@ export function DateField({
         </ThemedText>
         {value && (
           <Pressable
-            onPress={handleClear}
+            onPress={(e: any) => { e?.stopPropagation?.(); handleClear(); }}
             hitSlop={10}
             style={styles.clearButton}
             accessibilityLabel="Clear deadline"
@@ -124,10 +126,10 @@ export function DateField({
 
       {show && Platform.OS === 'android' && (
         <DateTimePicker
-          value={value ?? minDate}
+          value={value ?? (computedMinDate ?? startOfDay(new Date()))}
           mode="date"
           display="default"
-          minimumDate={minDate}
+          {...(computedMinDate ? { minimumDate: computedMinDate } : {})}
           onChange={handleAndroidChange}
         />
       )}
@@ -160,10 +162,10 @@ export function DateField({
                 </TouchableOpacity>
               </View>
               <DateTimePicker
-                value={tempDate ?? minDate}
+                value={tempDate ?? (computedMinDate ?? startOfDay(new Date()))}
                 mode="date"
                 display="inline"
-                minimumDate={minDate}
+                {...(computedMinDate ? { minimumDate: computedMinDate } : {})}
                 onChange={handleIOSChange}
                 themeVariant={colors.background === '#111820' ? 'dark' : 'light'}
               />

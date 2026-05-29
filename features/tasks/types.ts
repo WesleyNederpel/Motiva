@@ -17,5 +17,6 @@ export interface Task {
   deadline?: string | null;
   reward?: string | null;
   points_awarded?: boolean;
+  completed_at?: string | null;
   subtasks?: Subtask[];
 }

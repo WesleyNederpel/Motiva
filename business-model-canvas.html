@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motiva — Business Model Canvas</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #E6E8E6;
+      color: #23344A;
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(35, 52, 74, 0.08);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: #23344A;
+      color: #FFFFFF;
+      padding: 36px 48px 28px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .header h1 span {
+      color: #BF1A2F;
+    }
+
+    .header .subtitle {
+      font-size: 0.95rem;
+      font-weight: 400;
+      color: #8ba3be;
+      margin-top: 6px;
+    }
+
+    /* Canvas Grid */
+    .canvas {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 0;
+      border-top: 1px solid #e0e2e0;
+    }
+
+    .canvas-bottom {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      border-top: 2px solid #23344A;
+    }
+
+    .cell {
+      border-right: 1px solid #e0e2e0;
+      border-bottom: 1px solid #e0e2e0;
+      padding: 20px;
+      min-height: 200px;
+      position: relative;
+    }
+
+    .cell:last-child {
+      border-right: none;
+    }
+
+    .cell-wide {
+      border-right: 1px solid #e0e2e0;
+      border-bottom: 1px solid #e0e2e0;
+      padding: 20px;
+      min-height: 160px;
+    }
+
+    .cell-wide:last-child {
+      border-right: none;
+    }
+
+    /* Key Partners spans full height (row 1+2) */
+    .cell-partners {
+      grid-row: 1 / 3;
+      grid-column: 1;
+    }
+
+    /* Key Activities top half of col 2 */
+    .cell-activities {
+      grid-row: 1;
+      grid-column: 2;
+    }
+
+    /* Key Resources bottom half of col 2 */
+    .cell-resources {
+      grid-row: 2;
+      grid-column: 2;
+    }
+
+    /* Value Propositions spans full height (row 1+2) */
+    .cell-value {
+      grid-row: 1 / 3;
+      grid-column: 3;
+    }
+
+    /* Customer Relationships top half of col 4 */
+    .cell-relationships {
+      grid-row: 1;
+      grid-column: 4;
+    }
+
+    /* Channels bottom half of col 4 */
+    .cell-channels {
+      grid-row: 2;
+      grid-column: 4;
+    }
+
+    /* Customer Segments spans full height (row 1+2) */
+    .cell-segments {
+      grid-row: 1 / 3;
+      grid-column: 5;
+    }
+
+    .cell-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .cell-title h3 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #23344A;
+    }
+
+    .cell-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .icon-red {
+      background: #BF1A2F;
+      color: #fff;
+    }
+
+    .icon-blue {
+      background: #36749E;
+      color: #fff;
+    }
+
+    .icon-navy {
+      background: #23344A;
+      color: #fff;
+    }
+
+    .cell ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .cell li,
+    .cell-wide li {
+      font-size: 0.82rem;
+      color: #3a4d63;
+      padding: 5px 0;
+      border-bottom: 1px solid #f0f1f0;
+      line-height: 1.5;
+    }
+
+    .cell li:last-child,
+    .cell-wide li:last-child {
+      border-bottom: none;
+    }
+
+    .cell li strong {
+      color: #23344A;
+      font-weight: 600;
+    }
+
+    .cell-wide ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px 48px;
+      border-top: 1px solid #e6e8e6;
+      color: #8a99a8;
+      font-size: 0.8rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .canvas {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+
+      .cell-partners,
+      .cell-activities,
+      .cell-resources,
+      .cell-value,
+      .cell-relationships,
+      .cell-channels,
+      .cell-segments {
+        grid-row: auto;
+        grid-column: auto;
+      }
+
+      .canvas-bottom {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .canvas {
+        grid-template-columns: 1fr;
+      }
+
+      .header {
+        padding: 24px;
+      }
+
+      .cell,
+      .cell-wide {
+        padding: 16px;
+        min-height: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>Motiva<span>.</span></h1>
+      <div class="subtitle">Business Model Canvas — CMGT Brand Jam Mei '26</div>
+    </div>
+
+    <!-- CANVAS GRID -->
+    <div class="canvas">
+
+      <!-- Key Partnerships -->
+      <div class="cell cell-partners">
+        <div class="cell-title">
+          <div class="cell-icon icon-navy">🤝</div>
+          <h3>Key Partnerships</h3>
+        </div>
+        <ul>
+          <li><strong>Supabase</strong> — backend-infrastructuur (database, authenticatie)</li>
+          <li><strong>Expo / React Native</strong> — cross-platform ontwikkelplatform</li>
+          <li><strong>Apple & Google</strong> — App Store en Play Store distributie</li>
+          <li><strong>Onderwijsinstellingen</strong> — potentieel partnerschap voor studentenwelzijn</li>
+          <li><strong>CMGT / Brand Jam</strong> — academisch netwerk en validatie</li>
+        </ul>
+      </div>
+
+      <!-- Key Activities -->
+      <div class="cell cell-activities">
+        <div class="cell-title">
+          <div class="cell-icon icon-red">⚡</div>
+          <h3>Key Activities</h3>
+        </div>
+        <ul>
+          <li>App-ontwikkeling & onderhoud (React Native/TypeScript)</li>
+          <li>Gamification-design (punten, beloningen, avatars)</li>
+          <li>UX-onderzoek met doelgroep</li>
+          <li>SEO-content creatie ("hoe begin ik met…")</li>
+          <li>YouTube walkthroughs produceren</li>
+        </ul>
+      </div>
+
+      <!-- Key Resources -->
+      <div class="cell cell-resources">
+        <div class="cell-title">
+          <div class="cell-icon icon-blue">🏗️</div>
+          <h3>Key Resources</h3>
+        </div>
+        <ul>
+          <li>React Native + Expo codebase</li>
+          <li>Supabase cloud (PostgreSQL, Auth)</li>
+          <li>Ontwikkelteam & UX-expertise</li>
+          <li>Gebruikersdata & gedragsinzichten</li>
+          <li>Motiva-merkidentiteit & design system</li>
+        </ul>
+      </div>
+
+      <!-- Value Propositions -->
+      <div class="cell cell-value">
+        <div class="cell-title">
+          <div class="cell-icon icon-red">🎁</div>
+          <h3>Value Propositions</h3>
+        </div>
+        <ul>
+          <li><strong>Breek de scroll-routine</strong> — help studenten direct te starten met hun dag</li>
+          <li><strong>Extrinsieke + intrinsieke motivatie</strong> — punten en zelfgekozen beloningen</li>
+          <li><strong>Micro-taken</strong> — subtaken maken de eerste stap klein en haalbaar</li>
+          <li><strong>Visuele voortgang</strong> — progressbar, confetti, haptics en geluid</li>
+          <li><strong>Personalisatie</strong> — eigen beloningen, avatar-tiers (Free → Legendary)</li>
+          <li><strong>Gedragsgericht</strong> — focus op starten, niet alleen plannen</li>
+        </ul>
+      </div>
+
+      <!-- Customer Relationships -->
+      <div class="cell cell-relationships">
+        <div class="cell-title">
+          <div class="cell-icon icon-blue">💙</div>
+          <h3>Customer Relationships</h3>
+        </div>
+        <ul>
+          <li><strong>Self-service</strong> — gebruikers beheren taken en beloningen zelf</li>
+          <li><strong>Gamification</strong> — punten, avatars en celebrations houden gebruikers betrokken</li>
+          <li><strong>Personalisatie</strong> — zelfgekozen beloningen creëren eigenaarschap</li>
+          <li><strong>Dagelijks gebruik</strong> — ontworpen voor dagelijkse routine</li>
+        </ul>
+      </div>
+
+      <!-- Channels -->
+      <div class="cell cell-channels">
+        <div class="cell-title">
+          <div class="cell-icon icon-navy">🚚</div>
+          <h3>Channels</h3>
+        </div>
+        <ul>
+          <li><strong>Google / AI search</strong> — hoge intentie ("hoe begin ik met…")</li>
+          <li><strong>YouTube</strong> — how-to's en walkthroughs</li>
+          <li><strong>App stores</strong> — Apple App Store & Google Play</li>
+          <li><strong>Word-of-mouth</strong> — studentennetwerken</li>
+        </ul>
+      </div>
+
+      <!-- Customer Segments -->
+      <div class="cell cell-segments">
+        <div class="cell-title">
+          <div class="cell-icon icon-red">👤</div>
+          <h3>Customer Segments</h3>
+        </div>
+        <ul>
+          <li><strong>Primair:</strong> Studenten die weten wat ze moeten doen maar niet kunnen beginnen</li>
+          <li><strong>Kenmerk:</strong> Vastlopen in uitstelgedrag en schuldgevoel</li>
+          <li><strong>Situatie:</strong> 's Ochtends in bed, scrollen i.p.v. starten</li>
+          <li><strong>Doel:</strong> Productieve dagen zonder schuldgevoel</li>
+          <li><strong>Demografie:</strong> HBO/WO-studenten, digitaal vaardig, smartphone-first</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM ROW -->
+    <div class="canvas-bottom">
+
+      <!-- Cost Structure -->
+      <div class="cell-wide">
+        <div class="cell-title">
+          <div class="cell-icon icon-navy">💰</div>
+          <h3>Cost Structure</h3>
+        </div>
+        <ul>
+          <li><strong>Ontwikkeltijd</strong> — design, development, testing</li>
+          <li><strong>Supabase hosting</strong> — database, auth, opslag (gratis tier → betaald bij groei)</li>
+          <li><strong>App Store fees</strong> — Apple €99/jaar, Google €25 eenmalig</li>
+          <li><strong>Marketing</strong> — SEO-content, YouTube-productie</li>
+          <li><strong>Expo EAS</strong> — build & update infra voor app-distributie</li>
+        </ul>
+      </div>
+
+      <!-- Revenue Streams -->
+      <div class="cell-wide">
+        <div class="cell-title">
+          <div class="cell-icon icon-red">💵</div>
+          <h3>Revenue Streams</h3>
+        </div>
+        <ul>
+          <li><strong>MVP-fase:</strong> Gratis — focus op validatie en gebruikersgroei</li>
+          <li><strong>Freemium:</strong> Basisfeatures gratis, premium voor geavanceerde gamification (streaks,
+            statistieken)</li>
+          <li><strong>In-app purchases:</strong> Cosmetische items — avatar-tiers zijn al ingebouwd (Free / Common 25pts
+            / Rare 75pts / Legendary 150pts)</li>
+          <li><strong>B2B-licenties:</strong> Aanbieden aan hogescholen als studentenwelzijn-tool</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      <a href="marketing-onepager.html" style="color:#36749E;text-decoration:none;font-weight:600;">← Marketing
+        Onepager</a>
+      <span style="margin:0 12px;">·</span>
+      Motiva — CMGT Brand Jam Mei 2026
+    </div>
+
+  </div>
+</body>
+
+</html>

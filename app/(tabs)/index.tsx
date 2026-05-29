@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { ScrollView, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AddTaskForm } from '@/components/dashboard/add-task-form';
 import { CelebrationOverlay } from '@/components/dashboard/celebration-overlay';
@@ -14,6 +14,7 @@ import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 export default function DashboardScreen() {
   const styles = useThemedStyles();
   const colors = useThemeColors();
+  const insets = useSafeAreaInsets();
   const {
     tasks,
     loading,
@@ -56,49 +57,59 @@ export default function DashboardScreen() {
       <ThemedView style={styles.innerContainer}>
         <DashboardHeader onAdd={() => setShowAddTask(true)} />
 
-        {showAddTask && (
-          <AddTaskForm
-            onCancel={() => setShowAddTask(false)}
-            onSave={handleAddTask}
-          />
-        )}
-
         {loading ? (
           <ThemedView style={styles.emptyState}>
             <ThemedText style={styles.emptyText}>Loading tasks...</ThemedText>
           </ThemedView>
         ) : (
-          <ScrollView style={styles.taskList} showsVerticalScrollIndicator={false}>
-            {tasks.length === 0 ? (
-              <ThemedView style={styles.emptyState}>
-                <ThemedText style={styles.emptyText}>
-                  No tasks yet. Add your first task!
-                </ThemedText>
-              </ThemedView>
-            ) : (
-              <>
-                <TaskSection
-                  title="Open"
-                  tasks={openTasks}
-                  defaultExpanded={true}
-                  expandedTasks={expandedTasks}
-                  emptyMessage="No open tasks 🎉"
-                  {...sharedCallbacks}
+          <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          >
+            <ScrollView
+              style={styles.taskList}
+              contentContainerStyle={{ paddingBottom: insets.bottom + 16 }}
+              automaticallyAdjustKeyboardInsets
+              keyboardShouldPersistTaps="handled"
+              showsVerticalScrollIndicator={false}
+            >
+              {showAddTask && (
+                <AddTaskForm
+                  onCancel={() => setShowAddTask(false)}
+                  onSave={handleAddTask}
                 />
+              )}
+              {tasks.length === 0 ? (
+                <ThemedView style={styles.emptyState}>
+                  <ThemedText style={styles.emptyText}>
+                    No tasks yet. Add your first task!
+                  </ThemedText>
+                </ThemedView>
+              ) : (
+                <>
+                  <TaskSection
+                    title="Open"
+                    tasks={openTasks}
+                    defaultExpanded={true}
+                    expandedTasks={expandedTasks}
+                    emptyMessage="No open tasks 🎉"
+                    {...sharedCallbacks}
+                  />
 
-                <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 8 }} />
+                  <View style={{ height: 1, backgroundColor: colors.border, marginVertical: 8 }} />
 
-                <TaskSection
-                  title="Completed"
-                  tasks={completedTasks}
-                  defaultExpanded={false}
-                  expandedTasks={expandedTasks}
-                  emptyMessage="Nothing completed yet."
-                  {...sharedCallbacks}
-                />
-              </>
-            )}
-          </ScrollView>
+                  <TaskSection
+                    title="Completed"
+                    tasks={completedTasks}
+                    defaultExpanded={false}
+                    expandedTasks={expandedTasks}
+                    emptyMessage="Nothing completed yet."
+                    {...sharedCallbacks}
+                  />
+                </>
+              )}
+            </ScrollView>
+          </KeyboardAvoidingView>
         )}
       </ThemedView>
       <CelebrationOverlay />

@@ -4,8 +4,8 @@ import { TextInput } from 'react-native';
 import { DateField } from '@/components/common/date-field';
 import { FormButtons } from '@/components/common/form-buttons';
 import { ThemedView } from '@/components/themed-view';
-import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { AddTaskInput } from '@/features/tasks/use-tasks';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 
 interface AddTaskFormProps {
   onCancel: () => void;
@@ -61,6 +61,7 @@ export function AddTaskForm({ onCancel, onSave }: AddTaskFormProps) {
         onChange={setDeadline}
         show={showDatePicker}
         setShow={setShowDatePicker}
+        allowPast={true}
         style={styles.input}
       />
       <FormButtons

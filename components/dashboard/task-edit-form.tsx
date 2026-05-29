@@ -18,13 +18,14 @@ export function TaskEditForm({ task, onCancel, onSave }: TaskEditFormProps) {
   const colors = useThemeColors();
 
   const [title, setTitle] = useState(task.title);
+  const [reward, setReward] = useState(task.reward ?? '');
   const [deadline, setDeadline] = useState<Date | null>(
     task.deadline ? new Date(task.deadline) : null
   );
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const handleSave = async () => {
-    const ok = await onSave({ title, deadline });
+    const ok = await onSave({ title, deadline, reward });
     if (ok) onCancel();
   };
 
@@ -37,11 +38,19 @@ export function TaskEditForm({ task, onCancel, onSave }: TaskEditFormProps) {
         placeholderTextColor={colors.placeholder}
         autoFocus
       />
+      <TextInput
+        style={styles.input}
+        placeholder="Reward (optional)..."
+        value={reward}
+        onChangeText={setReward}
+        placeholderTextColor={colors.placeholder}
+      />
       <DateField
         value={deadline}
         onChange={setDeadline}
         show={showDatePicker}
         setShow={setShowDatePicker}
+        allowPast={true}
         style={styles.input}
       />
       <FormButtons

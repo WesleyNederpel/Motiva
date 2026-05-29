@@ -1,6 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 
+import { isOverdue } from '@/features/tasks/utils';
 import { supabase } from '@/lib/supabase';
 
 export interface ProfileStats {
@@ -24,7 +25,7 @@ export function useProfileStats() {
   const fetchStats = useCallback(async () => {
     try {
       const [tasksResult, userResult] = await Promise.all([
-        supabase.from('tasks').select('completed, reward'),
+        supabase.from('tasks').select('completed, reward, deadline'),
         supabase.auth.getUser(),
       ]);
 
@@ -41,7 +42,10 @@ export function useProfileStats() {
         totalTasks: rows.length,
         completedTasks: completed.length,
         rewardsEarned: completed.filter(
-          t => typeof t.reward === 'string' && t.reward.trim() !== ''
+          t =>
+            typeof t.reward === 'string' &&
+            t.reward.trim() !== '' &&
+            !isOverdue(t.deadline, false)
         ).length,
         points,
       });

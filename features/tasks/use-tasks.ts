@@ -4,7 +4,7 @@ import { Alert } from 'react-native';
 import { supabase } from '@/lib/supabase';
 import { triggerCelebration } from './celebration';
 import { Task } from './types';
-import { getTaskProgress, sortSubtasksByDeadline, sortTasksByDeadline } from './utils';
+import { calculateTaskPoints, getTaskProgress, sortSubtasksByDeadline, sortTasksByDeadline } from './utils';
 
 export interface AddTaskInput {
   title: string;
@@ -15,6 +15,7 @@ export interface AddTaskInput {
 export interface UpdateTaskInput {
   title: string;
   deadline: Date | null;
+  reward: string;
 }
 
 export interface AddSubtaskInput {
@@ -28,6 +29,12 @@ export interface UpdateSubtaskInput {
 }
 
 export function useTasks() {
+  const serializeDeadline = (date: Date | null): string | null => {
+    if (!date) return null;
+    const d = new Date(date);
+    d.setHours(12, 0, 0, 0); // normalize to local noon to avoid UTC day shift
+    return d.toISOString();
+  };
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
@@ -37,8 +44,8 @@ export function useTasks() {
     tasksRef.current = tasks;
   }, [tasks]);
 
-  const awardPoints = useCallback(async (subtaskCount: number) => {
-    const earned = 10 + subtaskCount * 5;
+  const awardPoints = useCallback(async (earned: number) => {
+    if (earned <= 0) return;
     const { data } = await supabase.auth.getUser();
     const current = data.user?.user_metadata?.points ?? 0;
     await supabase.auth.updateUser({ data: { points: current + earned } });
@@ -107,7 +114,7 @@ export function useTasks() {
           title: title.trim(),
           completed: false,
           user_id: user.id,
-          deadline: deadline ? deadline.toISOString() : null,
+          deadline: serializeDeadline(deadline),
           reward: reward.trim() || null,
         })
         .select()
@@ -138,11 +145,12 @@ export function useTasks() {
 
     const newCompletedState = !task.completed;
     const prevProgress = getTaskProgress(task);
+    const completedAt = newCompletedState ? new Date().toISOString() : null;
 
     try {
       const { error: taskError } = await supabase
         .from('tasks')
-        .update({ completed: newCompletedState })
+        .update({ completed: newCompletedState, completed_at: completedAt })
         .eq('id', taskId);
 
       if (taskError) {
@@ -180,6 +188,7 @@ export function useTasks() {
           return {
             ...t,
             completed: newCompletedState,
+            completed_at: completedAt,
             points_awarded: pointsJustAwarded ? true : t.points_awarded,
             subtasks: t.subtasks?.map(s => ({ ...s, completed: newCompletedState })),
           };
@@ -192,7 +201,7 @@ export function useTasks() {
       if (nextTask && prevProgress < 100 && getTaskProgress(nextTask) === 100) {
         triggerCelebration();
         if (pointsJustAwarded) {
-          await awardPoints(task.subtasks?.length ?? 0);
+          await awardPoints(calculateTaskPoints(nextTask));
         }
       }
     } catch (error) {
@@ -234,17 +243,19 @@ export function useTasks() {
     );
   }, []);
 
-  const updateTask = useCallback(async (taskId: string, { title, deadline }: UpdateTaskInput) => {
+  const updateTask = useCallback(async (taskId: string, { title, deadline, reward }: UpdateTaskInput) => {
     if (title.trim() === '') {
       Alert.alert('Error', 'Please enter a task title');
       return false;
     }
+    const trimmedReward = reward.trim() || null;
     try {
       const { error } = await supabase
         .from('tasks')
         .update({
           title: title.trim(),
-          deadline: deadline ? deadline.toISOString() : null,
+          deadline: serializeDeadline(deadline),
+          reward: trimmedReward,
         })
         .eq('id', taskId);
 
@@ -256,7 +267,7 @@ export function useTasks() {
 
       setTasks(prev => prev.map(t =>
         t.id === taskId
-          ? { ...t, title: title.trim(), deadline: deadline ? deadline.toISOString() : null }
+          ? { ...t, title: title.trim(), deadline: serializeDeadline(deadline), reward: trimmedReward }
           : t
       ));
       return true;
@@ -294,7 +305,7 @@ export function useTasks() {
           task_id: taskId,
           title: trimmed,
           completed: false,
-          deadline: deadline ? deadline.toISOString() : null,
+          deadline: serializeDeadline(deadline),
         })
         .select()
         .single();
@@ -356,10 +367,20 @@ export function useTasks() {
 
       const updatedTask = updatedTasks.find(t => t.id === taskId);
       const willComplete = updatedTask ? getTaskProgress(updatedTask) === 100 : false;
+      const wasComplete = prevProgress === 100;
+      let newCompletedAt: string | null | undefined = undefined;
+      if (willComplete && !wasComplete) {
+        newCompletedAt = new Date().toISOString();
+      } else if (!willComplete && wasComplete) {
+        newCompletedAt = null;
+      }
 
       let pointsJustAwarded = false;
       if (updatedTask?.subtasks?.length) {
         const updates: Record<string, unknown> = { completed: updatedTask.completed };
+        if (newCompletedAt !== undefined) {
+          updates.completed_at = newCompletedAt;
+        }
         if (willComplete && prevProgress < 100 && !task.points_awarded) {
           updates.points_awarded = true;
         }
@@ -378,15 +399,19 @@ export function useTasks() {
         }
       }
 
-      const finalTasks = pointsJustAwarded
-        ? updatedTasks.map(t => t.id === taskId ? { ...t, points_awarded: true } : t)
-        : updatedTasks;
+      const finalTasks = updatedTasks.map(t => {
+        if (t.id !== taskId) return t;
+        const next = { ...t };
+        if (pointsJustAwarded) next.points_awarded = true;
+        if (newCompletedAt !== undefined) next.completed_at = newCompletedAt;
+        return next;
+      });
       setTasks(finalTasks);
 
       if (updatedTask && prevProgress < 100 && willComplete) {
         triggerCelebration();
         if (pointsJustAwarded) {
-          await awardPoints(updatedTask.subtasks?.length ?? 0);
+          await awardPoints(calculateTaskPoints(updatedTask));
         }
       }
     } catch (error) {
@@ -437,7 +462,7 @@ export function useTasks() {
         .from('subtasks')
         .update({
           title: title.trim(),
-          deadline: deadline ? deadline.toISOString() : null,
+          deadline: serializeDeadline(deadline),
         })
         .eq('id', subtaskId);
 
@@ -453,7 +478,7 @@ export function useTasks() {
             ...t,
             subtasks: t.subtasks?.map(s =>
               s.id === subtaskId
-                ? { ...s, title: title.trim(), deadline: deadline ? deadline.toISOString() : null }
+                ? { ...s, title: title.trim(), deadline: serializeDeadline(deadline) }
                 : s
             ),
           }

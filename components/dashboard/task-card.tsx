@@ -45,11 +45,11 @@ export const TaskCard = React.memo(function TaskCard({
   const [isEditing, setIsEditing] = useState(false);
 
   const progress = getTaskProgress(task);
-  const accentColor = task.completed
-    ? colors.secondary
+  const accentColor = task.completed || progress === 100
+    ? colors.statusDone
     : progress > 0
-      ? colors.primary
-      : colors.muted;
+      ? colors.statusInProgress
+      : colors.primary;
 
   const handleToggleTask = useCallback(() => onToggleTask(task.id), [onToggleTask, task.id]);
   const handleDeleteTask = useCallback(() => onDeleteTask(task.id), [onDeleteTask, task.id]);

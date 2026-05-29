@@ -3,8 +3,8 @@ import { TextInput, View } from 'react-native';
 
 import { DateField } from '@/components/common/date-field';
 import { FormButtons } from '@/components/common/form-buttons';
-import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { AddSubtaskInput } from '@/features/tasks/use-tasks';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 
 interface AddSubtaskFormProps {
   onCancel: () => void;
@@ -50,6 +50,7 @@ export function AddSubtaskForm({ onCancel, onSave }: AddSubtaskFormProps) {
         onChange={setDeadline}
         show={showDatePicker}
         setShow={setShowDatePicker}
+        allowPast={true}
         style={styles.subtaskInput}
       />
       <FormButtons

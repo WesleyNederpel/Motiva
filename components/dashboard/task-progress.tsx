@@ -3,7 +3,7 @@ import { Text, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { Task } from '@/features/tasks/types';
-import { formatDeadline, getTaskProgress } from '@/features/tasks/utils';
+import { calculateTaskPoints, formatDeadline, getTaskProgress, isOverdue } from '@/features/tasks/utils';
 import { useThemedStyles } from '@/hooks/use-themed-styles';
 
 interface TaskProgressProps {
@@ -13,7 +13,8 @@ interface TaskProgressProps {
 export const TaskProgress = React.memo(function TaskProgress({ task }: TaskProgressProps) {
   const styles = useThemedStyles();
   const progress = getTaskProgress(task);
-  const pointsValue = 10 + (task.subtasks?.length ?? 0) * 5;
+  const overdue = isOverdue(task.deadline, task.completed);
+  const pointsValue = calculateTaskPoints(task);
 
   return (
     <>
@@ -29,10 +30,16 @@ export const TaskProgress = React.memo(function TaskProgress({ task }: TaskProgr
       </View>
 
       {task.deadline ? (
-        <ThemedText style={styles.dateLabel}>
+        <ThemedText style={[styles.dateLabel, overdue && styles.overdueText]}>
           {formatDeadline(task.deadline)}
         </ThemedText>
       ) : null}
+
+      {overdue && (
+        <View style={styles.overduePill}>
+          <Text style={styles.overduePillText}>⚠ Overdue</Text>
+        </View>
+      )}
 
       {task.reward ? (
         <View style={styles.rewardPill}>

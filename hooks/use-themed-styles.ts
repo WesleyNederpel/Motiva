@@ -308,6 +308,23 @@ export function useThemedStyles() {
         fontSize: 12,
         fontWeight: '600' as const,
       } as const,
+      overduePill: {
+        alignSelf: 'flex-start' as const,
+        backgroundColor: theme.error,
+        borderRadius: 20,
+        paddingHorizontal: 10,
+        paddingVertical: 3,
+        marginTop: 4,
+      } as const,
+      overduePillText: {
+        color: '#FFFFFF',
+        fontSize: 12,
+        fontWeight: '700' as const,
+      } as const,
+      overdueText: {
+        color: theme.error,
+        fontWeight: '600' as const,
+      } as const,
     };
   }, [colorScheme, theme]);
 

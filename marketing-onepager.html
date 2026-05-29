@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Motiva — Marketing Onepager</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #E6E8E6;
+      color: #23344A;
+      line-height: 1.6;
+      padding: 40px 20px;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #FFFFFF;
+      border-radius: 20px;
+      box-shadow: 0 4px 24px rgba(35, 52, 74, 0.08);
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      background: #23344A;
+      color: #FFFFFF;
+      padding: 48px 48px 36px;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 2.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 4px;
+    }
+
+    .header h1 span {
+      color: #BF1A2F;
+    }
+
+    .header .subtitle {
+      font-size: 1rem;
+      font-weight: 400;
+      color: #8ba3be;
+      margin-top: 8px;
+    }
+
+    .header .tagline {
+      margin-top: 20px;
+      font-size: 1.05rem;
+      font-weight: 500;
+      color: #dce4ec;
+      max-width: 640px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.7;
+    }
+
+    /* Section numbering + content */
+    .content {
+      padding: 40px 48px 48px;
+    }
+
+    .section {
+      margin-bottom: 36px;
+      border-left: 4px solid #BF1A2F;
+      padding-left: 24px;
+    }
+
+    .section:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-number {
+      display: inline-block;
+      background: #BF1A2F;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.8rem;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      text-align: center;
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+
+    .section-title {
+      display: inline;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #23344A;
+      vertical-align: middle;
+    }
+
+    .section-body {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      color: #3a4d63;
+    }
+
+    .section-body p {
+      margin-bottom: 10px;
+    }
+
+    .section-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* Sub headings inside sections */
+    .sub-label {
+      font-weight: 700;
+      color: #23344A;
+      margin-top: 16px;
+      margin-bottom: 4px;
+      font-size: 0.95rem;
+    }
+
+    .sub-label:first-child {
+      margin-top: 0;
+    }
+
+    /* Columns for jobs/pains/gains */
+    .three-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .col-card {
+      background: #f4f5f4;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .col-card h4 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+    }
+
+    .col-card.jobs h4 {
+      color: #36749E;
+    }
+
+    .col-card.pains h4 {
+      color: #BF1A2F;
+    }
+
+    .col-card.gains h4 {
+      color: #2a7a4f;
+    }
+
+    .col-card ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .col-card li {
+      font-size: 0.88rem;
+      color: #3a4d63;
+      padding: 5px 0;
+      border-bottom: 1px solid #e0e2e0;
+      line-height: 1.5;
+    }
+
+    .col-card li:last-child {
+      border-bottom: none;
+    }
+
+    .col-card li strong {
+      display: block;
+      font-size: 0.78rem;
+      color: #8a99a8;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    /* Channel cards */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-top: 16px;
+    }
+
+    .channel-card {
+      background: #f4f5f4;
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .channel-card .badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+    }
+
+    .channel-card.primary .badge {
+      background: #BF1A2F;
+      color: #fff;
+    }
+
+    .channel-card.secondary .badge {
+      background: #36749E;
+      color: #fff;
+    }
+
+    .channel-card h4 {
+      font-size: 1rem;
+      font-weight: 700;
+      color: #23344A;
+      margin-bottom: 8px;
+    }
+
+    .channel-card p {
+      font-size: 0.88rem;
+      color: #3a4d63;
+      margin-bottom: 6px;
+    }
+
+    .channel-card .role {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #23344A;
+      margin-top: 8px;
+    }
+
+    /* User situation callout */
+    .callout {
+      background: #f0f4f8;
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin-top: 12px;
+      font-style: italic;
+      color: #3a4d63;
+      font-size: 0.92rem;
+      border-left: 3px solid #36749E;
+    }
+
+    /* WHW items */
+    .whw-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .whw-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .whw-label {
+      flex-shrink: 0;
+      width: 52px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      padding-top: 2px;
+    }
+
+    .whw-label.why {
+      color: #BF1A2F;
+    }
+
+    .whw-label.how {
+      color: #36749E;
+    }
+
+    .whw-label.what {
+      color: #23344A;
+    }
+
+    .whw-text {
+      font-size: 0.93rem;
+      color: #3a4d63;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 24px 48px;
+      border-top: 1px solid #e6e8e6;
+      color: #8a99a8;
+      font-size: 0.8rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+
+      .header,
+      .content {
+        padding-left: 24px;
+        padding-right: 24px;
+      }
+
+      .header h1 {
+        font-size: 1.8rem;
+      }
+
+      .three-col {
+        grid-template-columns: 1fr;
+      }
+
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page">
+
+    <!-- HEADER -->
+    <div class="header">
+      <h1>Motiva<span>.</span></h1>
+      <div class="subtitle">Marketing Onepager — CMGT Brand Jam Mei '26</div>
+      <div class="tagline">
+        Voor studenten die moeite hebben om aan taken te beginnen, is dit een motivatie-app die hen helpt schooltaken
+        daadwerkelijk op te pakken door persoonlijke beloningen te koppelen aan voortgang en dagelijkse taken.
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- 1. DOELGROEP -->
+      <div class="section">
+        <span class="section-number">1</span>
+        <h2 class="section-title">Doelgroep</h2>
+        <div class="section-body">
+          <p>Studenten die weten wát ze moeten doen, maar moeite hebben om daadwerkelijk te beginnen — en daardoor
+            vastlopen in uitstelgedrag en schuldgevoel.</p>
+
+          <div class="sub-label">User Situation</div>
+          <div class="callout">
+            Een student ligt 's ochtends in bed met hun telefoon. Ze weten dat ze die dag moeten studeren of taken
+            moeten doen, maar blijven hangen in scrollen en uitstel. Ze willen uiteindelijk productieve dagen hebben
+            zodat ze later meer echte vrije tijd hebben zonder schuldgevoel.
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. WHAT / HOW / WHY -->
+      <div class="section">
+        <span class="section-number">2</span>
+        <h2 class="section-title">What / How / Why</h2>
+        <div class="section-body">
+          <div class="whw-grid">
+            <div class="whw-item">
+              <div class="whw-label why">Why</div>
+              <div class="whw-text">Studenten weten vaak wát ze moeten doen, maar niet hoe ze zichzelf zover krijgen om
+                eraan te beginnen. Deze app helpt die eerste stap makkelijker en motiverender te maken.</div>
+            </div>
+            <div class="whw-item">
+              <div class="whw-label how">How</div>
+              <div class="whw-text">De app combineert extrinsieke motivatie (punten/beloningen) met intrinsieke
+                motivatie. Gebruikers kunnen hun eigen beloningen instellen. De focus ligt op het starten van taken,
+                niet alleen op planning. De app is bedoeld voor dagelijks gebruik rondom schooltaken en routines. Het
+                concept komt voort uit een persoonlijk ervaren motivatieprobleem.</div>
+            </div>
+            <div class="whw-item">
+              <div class="whw-label what">What</div>
+              <div class="whw-text">Een mobiele app waarmee studenten dagelijkse taken kunnen bijhouden en zichzelf
+                kunnen motiveren via punten en zelfgekozen beloningen.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. WAARDEPROPOSITIE -->
+      <div class="section">
+        <span class="section-number">3</span>
+        <h2 class="section-title">Waardepropositie</h2>
+        <div class="section-body">
+          <p>Een app die studenten helpt om 's ochtends direct uit hun scroll-routine te breken en meteen te starten met
+            hun dag, zodat ze productieve dagen bouwen zonder zichzelf te verliezen in uitstelgedrag.</p>
+
+          <div class="three-col">
+            <div class="col-card jobs">
+              <h4>Jobs to be Done</h4>
+              <ul>
+                <li>
+                  <strong>Functional</strong>
+                  De dag starten en daadwerkelijk uit bed komen om aan de eerste taak te beginnen.
+                </li>
+                <li>
+                  <strong>Emotional</strong>
+                  Zichzelf niet langer zien als iemand die "weer de ochtend verspilt", maar als iemand die controle
+                  heeft over de start van de dag.
+                </li>
+                <li>
+                  <strong>Social</strong>
+                  Zichzelf ervaren als een "gedisciplineerde student" die zijn/haar leven op orde heeft.
+                </li>
+              </ul>
+            </div>
+
+            <div class="col-card pains">
+              <h4>Pains</h4>
+              <ul>
+                <li>Directe afleiding door telefoon zodra ze wakker zijn</li>
+                <li>Schuldgevoel later op de dag ("ik heb alweer niks gedaan")</li>
+                <li>Scrollen geeft korte dopamine zonder echte voldoening</li>
+              </ul>
+            </div>
+
+            <div class="col-card gains">
+              <h4>Gains</h4>
+              <ul>
+                <li>Direct gevoel van controle over de dag</li>
+                <li>Meer uren echte focus → meer vrije tijd later</li>
+                <li>Gevoel van discipline en consistentie</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. POSITIONERING + STATEMENT -->
+      <div class="section">
+        <span class="section-number">4</span>
+        <h2 class="section-title">Positionering + Statement</h2>
+        <div class="section-body">
+          <p>
+            Voor mensen die hun plannen wel maken maar ze niet uitvoeren, is jouw MVP een <strong>gedragsgericht
+              taaksysteem</strong> dat niet alleen organiseert wat je moet doen, maar je actief helpt beginnen en
+            volhouden door micro-taken en gepersonaliseerde beloningen.
+          </p>
+          <p>In een tijd waarin aandacht schaars is en uitstelgedrag de standaard is geworden.</p>
+        </div>
+      </div>
+
+      <!-- 5. TOP-2 KANALEN -->
+      <div class="section">
+        <span class="section-number">5</span>
+        <h2 class="section-title">Top-2 Kanalen</h2>
+        <div class="section-body">
+          <div class="two-col">
+            <div class="channel-card primary">
+              <span class="badge">Primary</span>
+              <h4>Zoekgedrag (Google / AI search)</h4>
+              <p>Mensen formuleren dit als directe vragen: <em>"hoe begin ik met…"</em>, <em>"eerste stap voor…"</em>,
+                <em>"stappenplan voor…"</em> — hoge intentie, lage frictie. Ze willen direct structuur.</p>
+              <div class="role">👉 Capture van "ik zit vast → ik heb een eerste stap nodig"</div>
+            </div>
+            <div class="channel-card secondary">
+              <span class="badge">Secondary</span>
+              <h4>YouTube (how-to + walkthrough)</h4>
+              <p>Mensen zoeken visuele structuur. Ze willen iemand "zien beginnen" — dat vermindert overweldiging.</p>
+              <div class="role">👉 Modelgedrag tonen (van chaos → eerste actie)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      Motiva — CMGT Brand Jam Mei 2026 · ignite.cx
+      <span style="margin:0 12px;">·</span>
+      <a href="business-model-canvas.html" style="color:#36749E;text-decoration:none;font-weight:600;">Business Model
+        Canvas →</a>
+    </div>
+
+  </div>
+</body>
+
+</html>

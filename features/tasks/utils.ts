@@ -1,5 +1,34 @@
 import { Subtask, Task } from './types';
 
+function startOfToday(): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+}
+
+export function isOverdue(deadline?: string | null, completed?: boolean): boolean {
+  if (!deadline) return false;
+  if (completed) return false;
+  const due = new Date(deadline);
+  if (isNaN(due.getTime())) return false;
+  return due < startOfToday();
+}
+
+export function countOverdueSubtasks(task: Task): number {
+  if (!task.subtasks || task.subtasks.length === 0) return 0;
+  return task.subtasks.reduce(
+    (n, st) => (isOverdue(st.deadline, st.completed) ? n + 1 : n),
+    0,
+  );
+}
+
+export function calculateTaskPoints(task: Task): number {
+  if (isOverdue(task.deadline, task.completed)) return 0;
+  const n = task.subtasks?.length ?? 0;
+  const overdueSubs = countOverdueSubtasks(task);
+  return Math.max(0, 10 + (n - overdueSubs) * 5);
+}
+
 export function getTaskProgress(task: Task): number {
   if (task.subtasks && task.subtasks.length > 0) {
     const completed = task.subtasks.filter(st => st.completed).length;

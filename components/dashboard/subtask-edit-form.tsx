@@ -3,9 +3,9 @@ import { TextInput, View } from 'react-native';
 
 import { DateField } from '@/components/common/date-field';
 import { FormButtons } from '@/components/common/form-buttons';
-import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { Subtask } from '@/features/tasks/types';
 import { UpdateSubtaskInput } from '@/features/tasks/use-tasks';
+import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 
 interface SubtaskEditFormProps {
   subtask: Subtask;
@@ -42,6 +42,7 @@ export function SubtaskEditForm({ subtask, onCancel, onSave }: SubtaskEditFormPr
         onChange={setDeadline}
         show={showDatePicker}
         setShow={setShowDatePicker}
+        allowPast={true}
         style={styles.subtaskInput}
       />
       <FormButtons
