@@ -10,7 +10,7 @@ import Animated, {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useThemeColors } from '../hooks/use-themed-styles';
 
-const logo = require('../assets/images/motiva-logo-transparant.png');
+const logo = require('../assets/images/splash-icon.png');
 
 export default function LoadingScreen() {
   const theme = useThemeColors();
