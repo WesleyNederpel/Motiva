@@ -49,6 +49,19 @@
       margin-bottom: 20px;
     }
 
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      color: #BF1A2F;
+      background: rgba(191, 26, 47, 0.12);
+      padding: 6px 12px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+
     .hero-text .brand img {
       width: 44px;
       height: 44px;
@@ -168,6 +181,79 @@
       color: #3a4d63;
       max-width: 640px;
       margin-bottom: 28px;
+    }
+
+    /* DIFFERENT (reward vs points) */
+    .different .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 8px;
+    }
+
+    .compare-card {
+      background: #f4f5f4;
+      border-radius: 14px;
+      padding: 22px 22px 8px;
+      border-top: 4px solid #36749E;
+    }
+
+    .compare-card.motiva {
+      border-top-color: #BF1A2F;
+      background: #fff7f8;
+    }
+
+    .compare-card h3 {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #23344A;
+      margin-bottom: 14px;
+      letter-spacing: -0.2px;
+    }
+
+    .compare-card .label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8a99a8;
+      margin-bottom: 4px;
+    }
+
+    .compare-card.motiva .label {
+      color: #BF1A2F;
+    }
+
+    .compare-row {
+      padding: 12px 0;
+      border-top: 1px solid #e6e8e6;
+    }
+
+    .compare-row:first-of-type {
+      border-top: none;
+    }
+
+    .compare-row p {
+      font-size: 0.92rem;
+      color: #3a4d63;
+      line-height: 1.5;
+    }
+
+    .different-tagline {
+      margin-top: 22px;
+      font-size: 0.95rem;
+      color: #23344A;
+      font-weight: 600;
+    }
+
+    .different-tagline span {
+      color: #BF1A2F;
+    }
+
+    @media (max-width: 700px) {
+      .different .compare {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* WHY */
@@ -417,10 +503,12 @@
           <img src="../assets/logos/motivalogo.png" alt="Motiva logo">
           <div class="name">Motiva<span>.</span></div>
         </div>
+        <div class="hero-eyebrow">Beyond points — real rewards you set yourself.</div>
         <h1>Start your day,<br><em>not your scroll.</em></h1>
         <p class="lede">
-          Motiva is the motivation app for students who know what they should be doing — but can't quite get started.
-          Plan your tasks, break them down, and earn the rewards you actually care about.
+          Motiva tracks your progress with points, but the real motivation is the reward <strong>you</strong> choose —
+          a coffee, a gaming session, an episode of that show. Finish the task <em>you</em> set, unlock the reward
+          <em>you</em> picked.
         </p>
         <div class="cta-row">
           <a class="cta primary" href="#tour">See the app</a>
@@ -445,24 +533,76 @@
       </p>
       <p>
         Instead of another planner that just shows you what you're not doing, Motiva turns every task into a small win —
-        with
-        progress you can see and personal rewards you actually look forward to. It's not about doing more. It's about
-        finally starting.
+        with progress you can see and <strong>personal rewards you actually look forward to</strong>. It's not about
+        doing more. It's about finally starting.
       </p>
+    </section>
+
+    <!-- WHY DIFFERENT -->
+    <section class="section different">
+      <div class="section-eyebrow">What makes Motiva different</div>
+      <h2 class="section-title">Other apps stop at points.<br>Motiva lets you choose what those points unlock.</h2>
+      <p class="section-lede">
+        Points, XP and badges are fine — until you realise they don't actually buy you anything. Motiva still tracks
+        your progress with points, but the difference is what's on the other side: <strong>a real reward you defined
+          yourself</strong>, tied to the task you're about to start.
+      </p>
+
+      <div class="compare">
+        <div class="compare-card">
+          <div class="label">Typical productivity apps</div>
+          <h3>Points are the whole reward</h3>
+          <div class="compare-row">
+            <p><strong>What you earn:</strong> points, XP or badges that live inside the app and don't unlock anything
+              real.</p>
+          </div>
+          <div class="compare-row">
+            <p><strong>Motivation:</strong> an external scoreboard — climb the leaderboard, keep the number going up.
+            </p>
+          </div>
+          <div class="compare-row">
+            <p><strong>Personalization:</strong> the same badges for everyone, whether you care about them or not.</p>
+          </div>
+          <div class="compare-row">
+            <p><strong>The payoff:</strong> a higher score… and then what?</p>
+          </div>
+        </div>
+
+        <div class="compare-card motiva">
+          <div class="label">Motiva</div>
+          <h3>Points <em>plus</em> a reward you actually want</h3>
+          <div class="compare-row">
+            <p><strong>What you earn:</strong> points <em>and</em> a real reward you set yourself — coffee, gaming time,
+              an episode, a break.</p>
+          </div>
+          <div class="compare-row">
+            <p><strong>Motivation:</strong> internal — you're working toward something <em>you</em> chose, not just a
+              number.</p>
+          </div>
+          <div class="compare-row">
+            <p><strong>Personalization:</strong> every task tied to a reward that fits your real life.</p>
+          </div>
+          <div class="compare-row">
+            <p><strong>The payoff:</strong> finish the task, cash in the thing you were actually looking forward to.</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="different-tagline">Points keep score. <span>Your reward is what gets you started.</span></p>
     </section>
 
     <!-- FEATURES -->
     <section class="section">
       <div class="section-eyebrow">Features</div>
       <h2 class="section-title">Tiny steps. Real rewards. Daily momentum.</h2>
-      <p class="section-lede">Everything in Motiva is designed around one job: helping you take the first step today.
-      </p>
+      <p class="section-lede">Points to track your progress, plus a real reward <em>you</em> chose for finishing the
+        job.</p>
 
       <div class="features-grid">
         <div class="feature">
-          <h3>Rewards you actually want</h3>
-          <p>Set your own rewards — a coffee, a gaming session, an episode of that show. Finish your tasks, unlock what
-            you chose for yourself.</p>
+          <h3>You set the reward</h3>
+          <p>Coffee, an episode, gaming time, a walk — whatever actually motivates you. You define it, you tie it to a
+            task, you cash it in. The points are just how you get there.</p>
         </div>
         <div class="feature">
           <h3>Tasks, broken down</h3>
@@ -528,8 +668,9 @@
       <div class="steps">
         <div class="step">
           <div class="num">1</div>
-          <h4>Add a task</h4>
-          <p>Pop in what you need to do today, set a deadline, and choose a reward worth chasing.</p>
+          <h4>Add a task &amp; pick the reward</h4>
+          <p>Pop in what you need to do today, set a deadline, and choose a reward <em>you</em> actually want — not
+            points, not a badge.</p>
         </div>
         <div class="step">
           <div class="num">2</div>
@@ -538,17 +679,18 @@
         </div>
         <div class="step">
           <div class="num">3</div>
-          <h4>Earn your reward</h4>
-          <p>Watch the progress bar fill up, celebrate the win, and cash in the reward you set for yourself.</p>
+          <h4>Cash in the reward you set</h4>
+          <p>Watch the progress bar fill up, celebrate the win, and enjoy the real reward <em>you</em> chose at the
+            start.</p>
         </div>
       </div>
     </section>
 
     <!-- CTA BAND -->
     <section class="cta-band">
-      <h2>Ready to start the day on your terms?</h2>
-      <p>Motiva is a student-built motivation app designed for people who plan a lot and start little. Give the first
-        task of tomorrow a fighting chance.</p>
+      <h2>Points get you moving. Your own reward gets you started.</h2>
+      <p>Motiva is a student-built motivation app for people who plan a lot and start little. Pick a real reward, give
+        tomorrow's first task a fighting chance, and finally enjoy what you've earned.</p>
       <a class="cta primary" href="#tour">Take another look</a>
     </section>
 
