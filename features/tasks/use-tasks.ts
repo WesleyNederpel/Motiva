@@ -51,19 +51,21 @@ export function useTasks() {
     await supabase.auth.updateUser({ data: { points: current + earned } });
   }, []);
 
-  const checkUser = useCallback(async () => {
+  const checkUser = useCallback(async (options?: { silent?: boolean }) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      Alert.alert('Authentication Required', 'Please log in to access your tasks');
+      if (!options?.silent) {
+        Alert.alert('Authentication Required', 'Please log in to access your tasks');
+      }
       setLoading(false);
       return null;
     }
     return user;
   }, []);
 
-  const fetchTasks = useCallback(async () => {
+  const fetchTasks = useCallback(async (options?: { silent?: boolean }) => {
     try {
-      const user = await checkUser();
+      const user = await checkUser(options);
       if (!user) return;
 
       const { data, error } = await supabase
@@ -94,9 +96,11 @@ export function useTasks() {
     }
   }, [checkUser]);
 
-  useEffect(() => {
-    fetchTasks();
-  }, [fetchTasks]);
+  const reset = useCallback(() => {
+    setTasks([]);
+    setExpandedTasks(new Set());
+    setLoading(true);
+  }, []);
 
   const addTask = useCallback(async ({ title, deadline, reward }: AddTaskInput) => {
     if (title.trim() === '') {
@@ -497,6 +501,7 @@ export function useTasks() {
     loading,
     expandedTasks,
     fetchTasks,
+    reset,
     addTask,
     toggleTask,
     deleteTask,

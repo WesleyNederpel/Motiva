@@ -1,6 +1,5 @@
-import { useFocusEffect } from 'expo-router';
-import React, { useCallback, useState } from 'react';
-import { Alert, ScrollView } from 'react-native';
+import React from 'react';
+import { ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ScreenHeader } from '@/components/common/screen-header';
@@ -8,51 +7,14 @@ import { EarnedRewardCard } from '@/components/rewards/earned-reward-card';
 import { NextRewardCard } from '@/components/rewards/next-reward-card';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Task } from '@/features/tasks/types';
+import { useTasksContext } from '@/features/tasks/tasks-context';
 import { getTaskProgress, isOverdue, sortByDeadline } from '@/features/tasks/utils';
 import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
-import { supabase } from '@/lib/supabase';
 
 export default function RewardsScreen() {
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { tasks } = useTasksContext();
   const styles = useThemedStyles();
   const theme = useThemeColors();
-
-  const fetchTasks = async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        Alert.alert('Authentication Required', 'Please log in to view rewards');
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*, subtasks (*)')
-        .order('deadline', { ascending: true });
-
-      if (error) {
-        console.error('Error fetching tasks:', error);
-        Alert.alert('Error', 'Failed to load rewards');
-        return;
-      }
-
-      setTasks(data || []);
-    } catch (error) {
-      console.error('Unexpected error:', error);
-      Alert.alert('Error', 'An unexpected error occurred');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useFocusEffect(
-    useCallback(() => {
-      fetchTasks();
-    }, [])
-  );
 
   const nextRewardTask = tasks
     .filter(t => !t.completed && t.reward && t.reward.trim() !== '' && !isOverdue(t.deadline, false))
@@ -85,32 +47,26 @@ export default function RewardsScreen() {
       <ThemedView style={styles.innerContainer}>
         <ScreenHeader title="Rewards" />
 
-        {loading ? (
-          <ThemedView style={styles.emptyState}>
-            <ThemedText style={styles.emptyText}>Loading rewards...</ThemedText>
-          </ThemedView>
-        ) : (
-          <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-            <ThemedText style={{ fontSize: 18, fontWeight: '800', marginBottom: 10, letterSpacing: 0.3, color: theme.rewardColor }}>
-              🎯 Next Reward
-            </ThemedText>
-            <NextRewardCard task={nextRewardTask} />
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+          <ThemedText style={{ fontSize: 18, fontWeight: '800', marginBottom: 10, letterSpacing: 0.3, color: theme.rewardColor }}>
+            🎯 Next Reward
+          </ThemedText>
+          <NextRewardCard task={nextRewardTask} />
 
-            <ThemedText style={{ fontSize: 18, fontWeight: '800', marginBottom: 10, letterSpacing: 0.3, color: theme.rewardColor }}>
-              🏆 Earned Rewards
-            </ThemedText>
+          <ThemedText style={{ fontSize: 18, fontWeight: '800', marginBottom: 10, letterSpacing: 0.3, color: theme.rewardColor }}>
+            🏆 Earned Rewards
+          </ThemedText>
 
-            {earnedTasks.length === 0 ? (
-              <ThemedView style={styles.taskItem}>
-                <ThemedText style={styles.emptyText}>No rewards earned yet.</ThemedText>
-              </ThemedView>
-            ) : (
-              earnedTasks.map(task => (
-                <EarnedRewardCard key={task.id} task={task} />
-              ))
-            )}
-          </ScrollView>
-        )}
+          {earnedTasks.length === 0 ? (
+            <ThemedView style={styles.taskItem}>
+              <ThemedText style={styles.emptyText}>No rewards earned yet.</ThemedText>
+            </ThemedView>
+          ) : (
+            earnedTasks.map(task => (
+              <EarnedRewardCard key={task.id} task={task} />
+            ))
+          )}
+        </ScrollView>
       </ThemedView>
     </SafeAreaView>
   );

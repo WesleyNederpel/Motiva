@@ -3,6 +3,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 
+import { TasksProvider } from '@/features/tasks/tasks-context';
 import { ThemePreferenceProvider } from '@/features/theme/theme-preference';
 import { useColorScheme } from '@/hooks/use-color-scheme';
 
@@ -38,7 +39,9 @@ function RootStack() {
 export default function RootLayout() {
   return (
     <ThemePreferenceProvider>
-      <RootStack />
+      <TasksProvider>
+        <RootStack />
+      </TasksProvider>
     </ThemePreferenceProvider>
   );
 }
