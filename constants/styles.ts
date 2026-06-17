@@ -316,6 +316,8 @@ export const DashboardStyles = StyleSheet.create({
   },
   subtaskTitle: {
     fontSize: FontSizes.sm,
+    flex: 1,
+    flexShrink: 1,
   },
   addSubtaskContainer: {
     paddingTop: Spacing.sm,

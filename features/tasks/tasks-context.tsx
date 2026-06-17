@@ -37,6 +37,9 @@ export function TasksProvider({ children }: { children: React.ReactNode }) {
         fetchedForUserRef.current = null;
         reset();
         setInitialized(false);
+      } else if (fetchedForUserRef.current !== userId) {
+        // New user signing in — reset so loading screen shows while tasks fetch.
+        setInitialized(false);
       }
     });
 

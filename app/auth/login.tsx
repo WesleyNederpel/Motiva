@@ -24,7 +24,7 @@ export default function LoginScreen() {
       if (error) {
         Alert.alert('Error', error.message);
       } else {
-        router.replace('/(tabs)');
+        router.replace('/');
       }
     } catch (error) {
       Alert.alert('Error', 'Something went wrong. Please try again.');

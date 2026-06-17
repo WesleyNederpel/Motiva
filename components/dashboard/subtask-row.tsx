@@ -9,7 +9,7 @@ import { formatDeadline, isOverdue } from '@/features/tasks/utils';
 import { useThemeColors, useThemedStyles } from '@/hooks/use-themed-styles';
 import { SubtaskEditForm } from './subtask-edit-form';
 
-const subtaskInnerRow = { flex: 1, flexDirection: 'row' as const, alignItems: 'center' as const };
+const subtaskInnerRow = { flex: 1, flexDirection: 'row' as const, alignItems: 'flex-start' as const };
 
 interface SubtaskRowProps {
   subtask: Subtask;
