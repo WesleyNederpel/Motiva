@@ -41,7 +41,7 @@ A React Native task-management app built with Expo and Supabase. Create tasks wi
 | Framework | [React Native](https://reactnative.dev) + [Expo](https://expo.dev) ~54 |
 | Routing | [Expo Router](https://expo.dev/router) v6 (file-based) |
 | Backend / Auth | [Supabase](https://supabase.com) (PostgreSQL + Auth) |
-| State | React `useState` / `useCallback` / `useRef` hooks |
+| State | React Context API (`TasksProvider`) + `useState` / `useCallback` / `useRef` hooks |
 | Storage (local) | `@react-native-async-storage/async-storage` |
 | Date picker | `@react-native-community/datetimepicker` |
 | Icons | `@expo/vector-icons` (MaterialIcons + SF Symbols via `expo-symbols`) |
@@ -82,6 +82,7 @@ create table public.tasks (
   user_id     uuid not null references auth.users(id) on delete cascade,
   title       text not null,
   completed       boolean not null default false,
+  completed_at    timestamptz,
   deadline        timestamptz,
   reward          text,
   points_awarded  boolean not null default false,
@@ -140,6 +141,10 @@ $$;
 
 > Without this function the button shows an "unavailable" alert instead of deleting the account — everything else still works fine.
 
+### 5. Where points & avatars live
+
+There is **no extra table** for gamification. A user's `points`, selected `avatar`, and `unlockedAvatars` list are all stored in Supabase **Auth `user_metadata`** (updated via `supabase.auth.updateUser({ data: ... })`). Completing a task awards points and flips `tasks.points_awarded`; spending points unlocks avatar tiers. See `app/(tabs)/profile.tsx` and `features/profile/use-profile-stats.ts`.
+
 ---
 
 ## Environment Variables
@@ -180,14 +185,12 @@ The Metro bundler will open. From there:
 | Scan QR with Expo Go | Press `s` to switch to Expo Go mode, then scan |
 | Android emulator | Press `a` |
 | iOS simulator (macOS only) | Press `i` |
-| Web browser | Press `w` |
 
 You can also use the dedicated scripts:
 
 ```bash
 npm run android   # open on Android device / emulator
 npm run ios       # open on iOS simulator
-npm run web       # open in browser
 ```
 
 ---
@@ -197,7 +200,7 @@ npm run web       # open in browser
 ```
 motiva/
 ├── app/                        # Expo Router screens (file-based routing)
-│   ├── _layout.tsx             # Root layout — ThemePreferenceProvider, navigation stack
+│   ├── _layout.tsx             # Root layout — ThemePreferenceProvider + TasksProvider, navigation stack
 │   ├── index.tsx               # Auth guard — redirects to tabs or login
 │   ├── loading.tsx             # Splash / auth-check screen
 │   ├── settings.tsx            # Appearance settings (pushed from Profile)
@@ -243,6 +246,8 @@ motiva/
 │   │   ├── profile-header.tsx     # Screen title header
 │   │   └── stats-card.tsx         # Stats grid (tasks, completions, rewards, points)
 │   ├── rewards/                # Rewards-specific components
+│   │   ├── next-reward-card.tsx   # Next upcoming reward
+│   │   └── earned-reward-card.tsx # Earned rewards list card
 │   ├── settings/               # Theme picker component
 │   ├── themed-text.tsx         # Text component wired to active theme colors
 │   ├── themed-view.tsx         # View component wired to active theme colors
@@ -256,6 +261,7 @@ motiva/
 │   ├── tasks/
 │   │   ├── types.ts            # Task and Subtask TypeScript interfaces
 │   │   ├── use-tasks.ts        # All task/subtask Supabase mutations and state
+│   │   ├── tasks-context.tsx   # TasksProvider — app-wide task state + auth-driven fetch
 │   │   ├── utils.ts            # getTaskProgress, formatDeadline, sort helpers
 │   │   └── celebration.ts      # Lightweight event emitter for celebration triggers
 │   ├── profile/
@@ -291,11 +297,15 @@ Supabase DB
     ↕  (supabase-js)
 lib/supabase.ts
     ↕
-features/tasks/use-tasks.ts   ← owns all task state + mutations
+features/tasks/use-tasks.ts        ← owns all task state + mutations
     ↕
-app/(tabs)/index.tsx           ← passes stable callbacks down
+features/tasks/tasks-context.tsx   ← TasksProvider wraps use-tasks; drives
+    ↕                                 auth-based fetch/reset, exposes useTasksContext()
+app/_layout.tsx                    ← mounts <TasksProvider>
     ↓
-components/dashboard/task-card.tsx  ← React.memo, curries task.id
+app/(tabs)/index.tsx               ← reads useTasksContext(), passes stable callbacks down
+    ↓
+components/dashboard/task-card.tsx ← React.memo, curries task.id
     ↓
 TaskCardHeader / TaskProgress / SubtaskList / TaskEditForm
 ```
@@ -303,9 +313,10 @@ TaskCardHeader / TaskProgress / SubtaskList / TaskEditForm
 ### Key decisions
 
 - **`use-tasks.ts` as single source of truth** — all Supabase reads and writes live in one hook. Screens and components receive only stable callback references, preventing unnecessary re-renders.
+- **`TasksProvider` context** (`features/tasks/tasks-context.tsx`) — wraps `useTasks` and mounts once in `app/_layout.tsx`. It listens to Supabase auth state to fetch tasks on sign-in and clear them on sign-out, and exposes the whole task API (plus `initialized` / `refresh`) via `useTasksContext()`. This means every screen shares one task list instead of each screen refetching.
 - **`tasksRef`** — a `useRef` mirror of the tasks array lets `useCallback` closures always read the latest list without declaring `tasks` as a dependency (which would recreate every function on every mutation).
 - **`React.memo` on `TaskCard`** — each card only re-renders when its own `task` object or the passed callbacks change.
-- **Celebration event emitter** (`features/tasks/celebration.ts`) — a module-level `Set` of listeners decouples the `useTasks` hook from `CelebrationOverlay` without needing React Context.
+- **Celebration event emitter** (`features/tasks/celebration.ts`) — a module-level `Set` of listeners decouples the `useTasks` hook from `CelebrationOverlay`, keeping the one-off completion trigger out of the shared task Context.
 
 ---
 
@@ -335,5 +346,5 @@ The user's preferred theme (`light` | `dark` | `system`) is persisted to AsyncSt
 | `npm start` | Start Metro bundler |
 | `npm run android` | Open on Android device / emulator |
 | `npm run ios` | Open on iOS simulator |
-| `npm run web` | Open in browser |
 | `npm run lint` | Run ESLint via `expo lint` |
+| `npm run reset-project` | Reset the starter project scaffolding |
