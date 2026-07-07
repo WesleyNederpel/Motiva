@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Motiva — Handover &amp; Further Development</title>
+  <style>
+    body {
+      font-family: Calibri, Arial, sans-serif;
+      font-size: 11pt;
+      line-height: 1.6;
+      color: #000000;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 0 32px;
+    }
+    h1 { font-size: 22pt; color: #1F3864; margin-top: 0; border-bottom: 2px solid #BF1A2F; padding-bottom: 6px; }
+    h2 { font-size: 15pt; color: #1F3864; margin-top: 28px; border-bottom: 1px solid #cccccc; padding-bottom: 4px; }
+    h3 { font-size: 12pt; color: #23344A; margin-top: 20px; }
+    p  { margin: 6px 0 10px 0; }
+    ul { margin: 6px 0 10px 24px; padding: 0; }
+    li { margin-bottom: 4px; }
+    ol { margin: 6px 0 10px 24px; padding: 0; }
+    strong { font-weight: bold; }
+    code {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 10pt;
+      background: #f4f4f4;
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+    pre {
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 9.5pt;
+      background: #f4f4f4;
+      border: 1px solid #ddd;
+      padding: 12px 16px;
+      border-radius: 4px;
+      white-space: pre;
+      overflow-x: auto;
+      margin: 10px 0;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 10px 0 16px 0;
+      font-size: 10.5pt;
+    }
+    th {
+      background-color: #23344A;
+      color: #ffffff;
+      text-align: left;
+      padding: 7px 10px;
+      border: 1px solid #aaaaaa;
+    }
+    td {
+      padding: 6px 10px;
+      border: 1px solid #cccccc;
+      vertical-align: top;
+    }
+    tr:nth-child(even) td { background-color: #f7f7f7; }
+    .meta { color: #444; font-size: 10.5pt; margin-bottom: 4px; }
+    .label-high   { color: #BF1A2F; font-weight: bold; }
+    .label-medium { color: #36749E; font-weight: bold; }
+    .label-suggested { color: #555; font-weight: bold; }
+    hr { border: none; border-top: 1px solid #dddddd; margin: 24px 0; }
+    .note { background: #fffbe6; border-left: 4px solid #f0c000; padding: 8px 14px; margin: 10px 0; border-radius: 2px; font-size: 10.5pt; }
+    .footer { color: #888; font-size: 9.5pt; margin-top: 40px; text-align: center; }
+  </style>
+</head>
+<body>
+
+<h1>Motiva &mdash; Handover &amp; Further Development</h1>
+
+<p class="meta"><strong>Project:</strong> Motiva &mdash; Task Management App</p>
+<p class="meta"><strong>Version:</strong> 1.0.0</p>
+<p class="meta"><strong>Platform:</strong> iOS &amp; Android (React Native / Expo)</p>
+<p class="meta"><strong>Backend:</strong> Supabase (PostgreSQL + Auth)</p>
+<p class="meta"><strong>Date:</strong> July 2026</p>
+
+<div class="note">For the full technical reference (tech stack, project structure, architecture, database schema, environment setup, current features, and theming) see <strong>README.md</strong> in the project root.</div>
+
+<hr>
+
+<h2>1. Project Overview</h2>
+<p>Motiva is a mobile task-management app built to motivate users through gamification. Users create tasks with optional deadlines and rewards, break them into subtasks, track progress via a visual progress bar, and are rewarded with points and unlockable avatars when tasks are completed. The app supports full dark/light mode and stores all user data securely per account.</p>
+
+<hr>
+
+<h2>2. Build &amp; Deployment</h2>
+<p>The project is configured for <strong>Expo Application Services (EAS)</strong>. EAS Project ID: <code>a1af2eba-0403-474c-8573-3ef1d98ae7d7</code></p>
+
+<table>
+  <tr><th>Build profile</th><th>Distribution</th><th>Notes</th></tr>
+  <tr><td>development</td><td>Internal</td><td>Includes development client</td></tr>
+  <tr><td>preview</td><td>Internal</td><td>For TestFlight / internal testing</td></tr>
+  <tr><td>production</td><td>App Store / Play Store</td><td>Auto-increments version</td></tr>
+</table>
+
+<h3>Commands</h3>
+<pre># Build for Android
+eas build --platform android --profile production
+
+# Build for iOS
+eas build --platform ios --profile production
+
+# Submit to app stores
+eas submit --platform android
+eas submit --platform ios</pre>
+
+<hr>
+
+<h2>3. Future Development Roadmap</h2>
+
+<h3>3.1 Push Notifications <span class="label-high">(HIGH PRIORITY)</span></h3>
+<p><strong>Goal:</strong> Remind users daily to work on open tasks and alert them on deadline day.</p>
+<p><strong>Implementation plan:</strong></p>
+<ul>
+  <li>Install <code>expo-notifications</code> package</li>
+  <li>Request notification permissions on first launch (show a permission prompt with context)</li>
+  <li>Daily reminder: schedule a local notification each evening (e.g. 20:00) listing the user&rsquo;s open tasks</li>
+  <li>Deadline-day notification: when a task is created or edited with a deadline, schedule a local notification for 09:00 on that deadline day</li>
+  <li>On task completion, cancel the corresponding deadline notification</li>
+  <li>Add a &ldquo;Notification Settings&rdquo; section to the Settings screen (toggle on/off, choose reminder time)</li>
+</ul>
+<p><strong>Key files to change:</strong> <code>app/_layout.tsx</code> (permission on launch), new <code>features/notifications/</code> folder for scheduling logic, <code>app/settings.tsx</code>.</p>
+
+<hr>
+
+<h3>3.2 App Store Release &mdash; iOS &amp; Android <span class="label-high">(HIGH PRIORITY)</span></h3>
+<p><strong>Goal:</strong> Publish Motiva to the Apple App Store and Google Play Store.</p>
+<p><strong>Steps for iOS:</strong></p>
+<ol>
+  <li>Enroll in the Apple Developer Program ($99/year &mdash; developer.apple.com)</li>
+  <li>Configure signing: <code>eas credentials --platform ios</code></li>
+  <li>Build: <code>eas build --platform ios --profile production</code></li>
+  <li>Submit: <code>eas submit --platform ios</code></li>
+  <li>Complete App Store Connect metadata: screenshots, description, age rating, privacy policy URL</li>
+</ol>
+<p><strong>Steps for Android:</strong></p>
+<ol>
+  <li>Create a Google Play Developer account ($25 one-time &mdash; play.google.com/console)</li>
+  <li>Build: <code>eas build --platform android --profile production</code></li>
+  <li>Submit: <code>eas submit --platform android</code></li>
+  <li>Complete Play Store metadata: feature graphic, screenshots, description, content rating</li>
+</ol>
+<div class="note"><strong>Note:</strong> A privacy policy URL is required by both stores because the app collects email addresses and user-generated content.</div>
+
+<hr>
+
+<h3>3.3 Avatar Store with Illustrated Avatars <span class="label-medium">(MEDIUM PRIORITY)</span></h3>
+<p><strong>Goal:</strong> Replace the current emoji-based avatar system with a proper avatar store where users buy illustrated avatars with their earned points.</p>
+<p><strong>Implementation plan:</strong></p>
+<ul>
+  <li>Design or license a set of avatar illustrations (e.g. 12&ndash;20 options across multiple styles/themes)</li>
+  <li>Store images in <code>assets/images/avatars/</code> and bundle them with the app</li>
+  <li>Define each avatar in a central config: <code>{ id, name, image, pointsCost, tier }</code></li>
+  <li>Keep the existing points economy &mdash; avatars are still purchased with points earned by completing tasks</li>
+  <li>The avatar picker (<code>avatar-picker.tsx</code>) becomes a scrollable store grid: owned avatars are selectable, locked avatars show their point cost and a lock icon</li>
+  <li><code>avatar-hero.tsx</code> renders <code>&lt;Image&gt;</code> instead of emoji text</li>
+  <li><code>unlockedAvatars</code> list and selected avatar ID remain in <code>user_metadata</code> (no schema change needed)</li>
+</ul>
+
+<hr>
+
+<h3>3.4 Recurring Tasks <span class="label-suggested">(SUGGESTED)</span></h3>
+<p><strong>Goal:</strong> Allow tasks to repeat automatically on a schedule (e.g., &ldquo;Clean desk &mdash; every Monday&rdquo;).</p>
+<ul>
+  <li>Add a <code>recurrence</code> column to the <code>tasks</code> table (<code>none</code> | <code>daily</code> | <code>weekly</code> | <code>monthly</code>)</li>
+  <li>When a recurring task is marked complete, auto-create a new copy with the next deadline</li>
+  <li>Show a recurring badge icon on recurring task cards</li>
+  <li>Add recurrence selection to the add/edit task form</li>
+</ul>
+
+<hr>
+
+<h3>3.5 Task Categories / Tags <span class="label-suggested">(SUGGESTED)</span></h3>
+<p><strong>Goal:</strong> Let users organise tasks by area of life (e.g., Work, Study, Personal, Health).</p>
+<ul>
+  <li>Add a <code>category</code> column (or a separate <code>tags</code> table) to <code>tasks</code></li>
+  <li>Add a category filter bar at the top of the Dashboard</li>
+  <li>Color-code task cards or badges by category</li>
+  <li>Show category breakdown in the Profile stats</li>
+</ul>
+
+<hr>
+
+<h3>3.6 Home Screen Widget <span class="label-suggested">(SUGGESTED)</span></h3>
+<p><strong>Goal:</strong> Show today&rsquo;s open tasks on the device home screen without opening the app.</p>
+<ul>
+  <li>Use <code>expo-widgets</code> (currently experimental) or a native module</li>
+  <li>Widget shows count of open tasks + up to 3 task titles</li>
+  <li>Tapping the widget deep-links directly to the Dashboard</li>
+</ul>
+
+<hr>
+
+<h3>3.7 Detailed Statistics / Productivity Insights <span class="label-suggested">(SUGGESTED)</span></h3>
+<p><strong>Goal:</strong> Give users a view of their long-term progress and habits.</p>
+<ul>
+  <li>Completion timestamps already stored in <code>completed_at</code> &mdash; ready to use</li>
+  <li>Add a Statistics screen (new tab or pushed from Profile)</li>
+  <li>Show: tasks completed per week (bar chart), completion rate by day of week, average time to complete a task</li>
+  <li>Recommended charting library: <code>react-native-gifted-charts</code> or <code>victory-native</code></li>
+</ul>
+
+<hr>
+
+<h3>3.8 Onboarding Flow for New Users <span class="label-suggested">(SUGGESTED)</span></h3>
+<p><strong>Goal:</strong> Guide new users through the app on first launch.</p>
+<ul>
+  <li>Detect first launch via AsyncStorage flag</li>
+  <li>Show a 3&ndash;4 screen modal walkthrough: &ldquo;Create your first task&rdquo;, &ldquo;Break it into subtasks&rdquo;, &ldquo;Earn rewards&rdquo;, &ldquo;Unlock avatars&rdquo;</li>
+  <li>Skip button on every screen</li>
+  <li>Mark onboarding complete in AsyncStorage so it never shows again</li>
+</ul>
+
+<hr>
+
+<h2>4. Known Limitations &amp; Technical Debt</h2>
+<ul>
+  <li><strong>No offline support</strong> &mdash; all reads and writes require an internet connection. Tasks created offline are lost.</li>
+  <li><strong>No pagination</strong> &mdash; the app fetches all tasks at once. Performance may degrade for users with many hundreds of tasks.</li>
+  <li><strong>Subtask deadlines</strong> &mdash; subtasks support deadlines in the data model but there is currently no deadline-day notification for individual subtasks.</li>
+  <li><strong>No email verification enforcement</strong> &mdash; users can log in without verifying their email. Consider enabling Supabase email confirmation for production.</li>
+  <li><strong>Avatar metadata in auth</strong> &mdash; storing avatar data in <code>user_metadata</code> is convenient but limits querying (e.g., leaderboards). A dedicated <code>profiles</code> table would be needed for any social features.</li>
+  <li><strong>iOS build requires macOS</strong> &mdash; <code>eas build</code> in the cloud handles this, but <code>expo run:ios</code> locally requires a Mac.</li>
+</ul>
+
+<hr>
+
+<h2>5. Resources</h2>
+<table>
+  <tr><th>Resource</th><th>Link</th></tr>
+  <tr><td>Expo documentation</td><td>https://docs.expo.dev</td></tr>
+  <tr><td>Expo Router docs</td><td>https://expo.github.io/router</td></tr>
+  <tr><td>Supabase documentation</td><td>https://supabase.com/docs</td></tr>
+  <tr><td>EAS Build docs</td><td>https://docs.expo.dev/build/introduction</td></tr>
+  <tr><td>EAS Submit docs</td><td>https://docs.expo.dev/submit/introduction</td></tr>
+  <tr><td>Apple Developer</td><td>https://developer.apple.com</td></tr>
+  <tr><td>Google Play Console</td><td>https://play.google.com/console</td></tr>
+  <tr><td>expo-notifications</td><td>https://docs.expo.dev/versions/latest/sdk/notifications</td></tr>
+</table>
+
+<p class="footer">Document generated: July 2026 &nbsp;|&nbsp; Motiva v1.0.0</p>
+
+</body>
+</html>
